@@ -23,3 +23,10 @@ export const RADIUS = {
   md: 12, // tarjetas
   pill: 999, // chips
 };
+
+// Inter (la misma fuente de la web). Se carga en App.tsx.
+export const FONT = {
+  regular: "Inter_400Regular",
+  medium: "Inter_500Medium",
+  semibold: "Inter_600SemiBold",
+};

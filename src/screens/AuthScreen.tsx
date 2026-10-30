@@ -1,17 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import Text from "../components/AppText";
 import { ROLES, Role, User } from "../data";
-import { COLORS, RADIUS } from "../theme";
+import { COLORS, RADIUS, FONT } from "../theme";
 
 type Mode = "login" | "register";
 
@@ -259,6 +251,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   input: {
+    fontFamily: FONT.regular,
     paddingHorizontal: 12,
     paddingVertical: 11,
     fontSize: 14,
@@ -278,6 +271,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   passwordInput: {
+    fontFamily: FONT.regular,
     flex: 1,
     paddingVertical: 11,
     fontSize: 14,

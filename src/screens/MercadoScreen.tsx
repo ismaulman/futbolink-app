@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import Text from "../components/AppText";
 import OfferCard from "../components/OfferCard";
 import { MOCK_OFFERS, Offer } from "../data";
 import { COLORS, RADIUS } from "../theme";

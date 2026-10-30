@@ -1,3 +1,9 @@
+import {
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  useFonts,
+} from "@expo-google-fonts/inter";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -13,6 +19,11 @@ import PerfilScreen from "./src/screens/PerfilScreen";
 import { COLORS } from "./src/theme";
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+  });
   const [user, setUser] = useState<User | null>(null);
   const [tab, setTab] = useState<TabKey>("mercado");
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
@@ -35,6 +46,10 @@ export default function App() {
     setSelectedOffer(null);
     setAppliedIds([]);
   };
+
+  if (!fontsLoaded) {
+    return <View style={styles.root} />;
+  }
 
   if (!user) {
     return (

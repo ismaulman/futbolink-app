@@ -1,15 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import {
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { FlatList, Pressable, StyleSheet, TextInput, View } from "react-native";
+import Text from "../components/AppText";
 import { MOCK_PLAYERS, POSITIONS, Player } from "../data";
-import { COLORS, RADIUS } from "../theme";
+import { COLORS, RADIUS, FONT } from "../theme";
 
 function initials(name: string) {
   return name
@@ -132,7 +126,8 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     backgroundColor: COLORS.surface,
   },
-  input: { flex: 1, paddingVertical: 10, fontSize: 14, color: COLORS.ink },
+  input: {
+    fontFamily: FONT.regular, flex: 1, paddingVertical: 10, fontSize: 14, color: COLORS.ink },
   chipsRow: { gap: 8, paddingTop: 12 },
   chip: {
     paddingHorizontal: 14,
