@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     fontSize: 32,
-    fontWeight: "800",
+    fontWeight: "500",
     color: COLORS.brand,
     textAlign: "center",
   },
@@ -249,12 +249,12 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   segmentActive: { backgroundColor: COLORS.white },
-  segmentText: { fontSize: 13, fontWeight: "600", color: COLORS.muted },
+  segmentText: { fontSize: 13, fontWeight: "500", color: COLORS.muted },
   segmentTextActive: { color: COLORS.ink },
   field: { marginBottom: 14 },
   label: {
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: "500",
     color: COLORS.ink,
     marginBottom: 6,
   },
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primarySoft,
   },
   roleBody: { flex: 1 },
-  roleLabel: { fontSize: 14, fontWeight: "700", color: COLORS.ink },
+  roleLabel: { fontSize: 14, fontWeight: "500", color: COLORS.ink },
   roleDescription: { fontSize: 12, color: COLORS.muted, marginTop: 1 },
   error: { fontSize: 13, color: COLORS.danger, marginBottom: 12 },
   submit: {
@@ -309,13 +309,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  submitText: { fontSize: 15, fontWeight: "700", color: COLORS.white },
+  submitText: { fontSize: 15, fontWeight: "500", color: COLORS.white },
   forgot: {
     fontSize: 13,
     color: COLORS.primaryDark,
     textAlign: "center",
     marginTop: 14,
-    fontWeight: "600",
+    fontWeight: "500",
   },
   note: {
     fontSize: 11,

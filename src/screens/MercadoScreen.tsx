@@ -76,12 +76,12 @@ const styles = StyleSheet.create({
   header: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
   logo: {
     fontSize: 14,
-    fontWeight: "800",
+    fontWeight: "500",
     color: COLORS.primaryDark,
     letterSpacing: 0.5,
     marginBottom: 6,
   },
-  heading: { fontSize: 24, fontWeight: "700", color: COLORS.ink },
+  heading: { fontSize: 22, fontWeight: "500", color: COLORS.ink },
   subheading: { fontSize: 13, color: COLORS.muted, marginTop: 2 },
   filtersRow: { flexDirection: "row", gap: 8, marginTop: 14 },
   chip: {
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primarySoft,
     borderColor: COLORS.primaryBorder,
   },
-  chipText: { fontSize: 13, fontWeight: "600", color: COLORS.muted },
+  chipText: { fontSize: 13, fontWeight: "500", color: COLORS.muted },
   chipTextActive: { color: COLORS.primaryDark },
   list: { padding: 16, gap: 12 },
 });

@@ -119,7 +119,7 @@ export default function BuscarScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   header: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
-  heading: { fontSize: 24, fontWeight: "700", color: COLORS.ink },
+  heading: { fontSize: 22, fontWeight: "500", color: COLORS.ink },
   subheading: { fontSize: 13, color: COLORS.muted, marginTop: 2 },
   searchBox: {
     flexDirection: "row",
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primarySoft,
     borderColor: COLORS.primaryBorder,
   },
-  chipText: { fontSize: 13, fontWeight: "600", color: COLORS.muted },
+  chipText: { fontSize: 13, fontWeight: "500", color: COLORS.muted },
   chipTextActive: { color: COLORS.primaryDark },
   list: { padding: 16, gap: 10 },
   card: {
@@ -167,10 +167,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  avatarText: { fontSize: 15, fontWeight: "800", color: COLORS.primaryDark },
+  avatarText: { fontSize: 15, fontWeight: "500", color: COLORS.primaryDark },
   cardBody: { flex: 1 },
   nameRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  name: { fontSize: 15, fontWeight: "700", color: COLORS.ink, flexShrink: 1 },
+  name: { fontSize: 15, fontWeight: "500", color: COLORS.ink, flexShrink: 1 },
   meta: { fontSize: 12, color: COLORS.muted, marginTop: 2 },
   empty: { textAlign: "center", color: COLORS.muted, marginTop: 32 },
 });

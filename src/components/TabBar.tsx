@@ -60,6 +60,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 3,
   },
-  label: { fontSize: 11, color: COLORS.muted, fontWeight: "600" },
+  label: { fontSize: 11, color: COLORS.muted, fontWeight: "500" },
   labelActive: { color: COLORS.primary },
 });

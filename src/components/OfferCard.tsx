@@ -54,9 +54,9 @@ const styles = StyleSheet.create({
   },
   pressed: { backgroundColor: COLORS.surface },
   location: { fontSize: 12, color: COLORS.muted },
-  title: { fontSize: 16, fontWeight: "600", color: COLORS.ink, marginTop: 4 },
+  title: { fontSize: 16, fontWeight: "500", color: COLORS.ink, marginTop: 4 },
   club: { fontSize: 14, color: COLORS.muted, marginTop: 2 },
-  salary: { fontSize: 14, fontWeight: "600", color: COLORS.ink, marginTop: 8 },
+  salary: { fontSize: 14, fontWeight: "500", color: COLORS.ink, marginTop: 8 },
   footer: {
     flexDirection: "row",
     alignItems: "center",
@@ -68,5 +68,5 @@ const styles = StyleSheet.create({
   },
   posted: { fontSize: 12, color: COLORS.muted },
   appliedRow: { flexDirection: "row", alignItems: "center", gap: 4 },
-  action: { fontSize: 13, fontWeight: "600", color: COLORS.primaryDark },
+  action: { fontSize: 13, fontWeight: "500", color: COLORS.primaryDark },
 });

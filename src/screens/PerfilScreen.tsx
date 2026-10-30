@@ -27,6 +27,8 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   );
 }
 
+// Perfil estilo Instagram/LinkedIn: avatar + números arriba, datos en listas
+// planas con divisores finos, sin cajas ni negritas pesadas.
 export default function PerfilScreen({ user, appliedCount, onLogout }: Props) {
   const initials = user.name
     .split(" ")
@@ -42,33 +44,47 @@ export default function PerfilScreen({ user, appliedCount, onLogout }: Props) {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.heading}>Perfil</Text>
+      <View style={styles.topRow}>
+        <Text style={styles.username}>{user.name}</Text>
+        <Pressable onPress={onLogout} hitSlop={10} accessibilityLabel="Cerrar sesión">
+          <Ionicons name="log-out-outline" size={24} color={COLORS.ink} />
+        </Pressable>
+      </View>
 
-      <View style={styles.headerCard}>
+      <View style={styles.headerRow}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>{initials}</Text>
         </View>
-        <Text style={styles.name}>{user.name}</Text>
-        <Text style={styles.subtitle}>
-          {roleLabel} · {user.email}
-        </Text>
-
-        <View style={styles.unverified}>
-          <Ionicons name="shield-outline" size={14} color={COLORS.muted} />
-          <Text style={styles.unverifiedText}>Perfil sin verificar</Text>
-        </View>
-
         <View style={styles.statsRow}>
           <Stat value={String(MY_PROFILE.views)} label="Vistas" />
-          <Stat value={String(MY_PROFILE.videoPlays)} label="Reproducciones" />
+          <Stat value={String(MY_PROFILE.videoPlays)} label="Videos" />
           <Stat value={String(appliedCount)} label="Postulaciones" />
         </View>
+      </View>
+
+      <View style={styles.bio}>
+        <Text style={styles.name}>{user.name}</Text>
+        <Text style={styles.role}>
+          {roleLabel}
+          {isPlayer ? ` · ${MY_PROFILE.position}` : ""}
+        </Text>
+        <Text style={styles.email}>{user.email}</Text>
+      </View>
+
+      <View style={styles.actions}>
+        <Pressable style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
+          <Text style={styles.actionText}>Editar perfil</Text>
+        </Pressable>
+        <Pressable style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
+          <Ionicons name="shield-checkmark-outline" size={15} color={COLORS.ink} />
+          <Text style={styles.actionText}>Verificar</Text>
+        </Pressable>
       </View>
 
       {isPlayer ? (
         <>
           <Text style={styles.sectionTitle}>Información</Text>
-          <View style={styles.card}>
+          <View style={styles.list}>
             <InfoRow label="Posición" value={MY_PROFILE.position} />
             <InfoRow label="Altura" value={MY_PROFILE.height} />
             <InfoRow label="Pie hábil" value={MY_PROFILE.foot} />
@@ -76,24 +92,22 @@ export default function PerfilScreen({ user, appliedCount, onLogout }: Props) {
           </View>
 
           <Text style={styles.sectionTitle}>Trayectoria</Text>
-          <View style={styles.card}>
-            {MY_PROFILE.career.map((item, index) => (
-              <View
-                key={item.year}
-                style={[
-                  styles.careerRow,
-                  index === MY_PROFILE.career.length - 1 && styles.careerRowLast,
-                ]}
-              >
-                <Text style={styles.careerYear}>{item.year}</Text>
-                <Text style={styles.careerClub}>{item.club}</Text>
-                <Text style={styles.careerDetail}>{item.detail}</Text>
+          <View style={styles.list}>
+            {MY_PROFILE.career.map((item) => (
+              <View key={item.year} style={styles.careerRow}>
+                <View style={styles.careerDot} />
+                <View style={styles.careerBody}>
+                  <Text style={styles.careerClub}>{item.club}</Text>
+                  <Text style={styles.careerDetail}>
+                    {item.detail} · {item.year}
+                  </Text>
+                </View>
               </View>
             ))}
           </View>
         </>
       ) : (
-        <View style={[styles.card, styles.emptyCard]}>
+        <View style={styles.empty}>
           <Text style={styles.emptyTitle}>Completá tu perfil</Text>
           <Text style={styles.emptyText}>
             Acá vas a poder cargar tu experiencia y los datos de tu{" "}
@@ -101,113 +115,108 @@ export default function PerfilScreen({ user, appliedCount, onLogout }: Props) {
           </Text>
         </View>
       )}
-
-      <Pressable
-        onPress={onLogout}
-        style={({ pressed }) => [styles.logout, pressed && { opacity: 0.8 }]}
-      >
-        <Ionicons name="log-out-outline" size={18} color={COLORS.muted} />
-        <Text style={styles.logoutText}>Cerrar sesión</Text>
-      </Pressable>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  content: { padding: 16, paddingBottom: 24 },
-  heading: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: COLORS.ink,
-    marginBottom: 14,
-  },
-  headerCard: {
+  content: { paddingBottom: 24 },
+  topRow: {
+    flexDirection: "row",
     alignItems: "center",
-    padding: 18,
-    borderRadius: RADIUS.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.white,
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  username: { fontSize: 20, fontWeight: "500", color: COLORS.ink },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    gap: 20,
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 84,
+    height: 84,
+    borderRadius: 42,
     backgroundColor: COLORS.primarySoft,
+    borderWidth: 1,
+    borderColor: COLORS.primaryBorder,
     alignItems: "center",
     justifyContent: "center",
   },
-  avatarText: { fontSize: 28, fontWeight: "800", color: COLORS.primaryDark },
-  name: { fontSize: 20, fontWeight: "800", color: COLORS.ink, marginTop: 10 },
-  subtitle: { fontSize: 13, color: COLORS.muted, marginTop: 4 },
-  unverified: {
+  avatarText: { fontSize: 30, fontWeight: "400", color: COLORS.primaryDark },
+  statsRow: { flex: 1, flexDirection: "row", justifyContent: "space-around" },
+  stat: { alignItems: "center" },
+  statValue: { fontSize: 18, fontWeight: "500", color: COLORS.ink },
+  statLabel: { fontSize: 12, color: COLORS.muted, marginTop: 2 },
+  bio: { paddingHorizontal: 16, marginTop: 14 },
+  name: { fontSize: 15, fontWeight: "500", color: COLORS.ink },
+  role: { fontSize: 14, color: COLORS.muted, marginTop: 2 },
+  email: { fontSize: 13, color: COLORS.subtle, marginTop: 2 },
+  actions: {
+    flexDirection: "row",
+    gap: 8,
+    paddingHorizontal: 16,
+    marginTop: 14,
+  },
+  actionButton: {
+    flex: 1,
+    height: 36,
     flexDirection: "row",
     alignItems: "center",
-    gap: 5,
-    marginTop: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    justifyContent: "center",
+    gap: 6,
     borderRadius: RADIUS.sm,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    backgroundColor: COLORS.divider,
   },
-  unverifiedText: { fontSize: 12, color: COLORS.muted },
-  statsRow: {
-    flexDirection: "row",
-    alignSelf: "stretch",
-    marginTop: 16,
-    paddingTop: 14,
+  actionText: { fontSize: 13, fontWeight: "500", color: COLORS.ink },
+  pressed: { opacity: 0.7 },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: COLORS.ink,
+    paddingHorizontal: 16,
+    marginTop: 26,
+    marginBottom: 4,
+  },
+  list: {
+    marginHorizontal: 16,
     borderTopWidth: 1,
     borderTopColor: COLORS.divider,
   },
-  stat: { flex: 1, alignItems: "center" },
-  statValue: { fontSize: 18, fontWeight: "800", color: COLORS.primaryDark },
-  statLabel: { fontSize: 11, color: COLORS.muted, marginTop: 2 },
-  sectionTitle: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: COLORS.ink,
-    marginTop: 20,
-    marginBottom: 8,
-  },
-  card: {
-    padding: 14,
-    borderRadius: RADIUS.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.white,
-  },
-  emptyCard: { marginTop: 20 },
-  emptyTitle: { fontSize: 15, fontWeight: "700", color: COLORS.ink },
-  emptyText: { fontSize: 13, color: COLORS.muted, marginTop: 4, lineHeight: 19 },
   infoRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: 6,
-  },
-  infoLabel: { fontSize: 13, color: COLORS.muted },
-  infoValue: { fontSize: 13, fontWeight: "600", color: COLORS.ink },
-  careerRow: {
-    paddingBottom: 12,
-    marginBottom: 12,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.divider,
   },
-  careerRowLast: { paddingBottom: 0, marginBottom: 0, borderBottomWidth: 0 },
-  careerYear: { fontSize: 11, color: COLORS.muted },
-  careerClub: { fontSize: 14, fontWeight: "700", color: COLORS.ink, marginTop: 2 },
-  careerDetail: { fontSize: 12, color: COLORS.muted, marginTop: 1 },
-  logout: {
+  infoLabel: { fontSize: 14, color: COLORS.muted },
+  infoValue: { fontSize: 14, color: COLORS.ink },
+  careerRow: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    marginTop: 24,
+    gap: 12,
     paddingVertical: 12,
-    borderRadius: RADIUS.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.white,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.divider,
   },
-  logoutText: { fontSize: 14, fontWeight: "600", color: COLORS.muted },
+  careerDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: COLORS.primary,
+    marginTop: 6,
+  },
+  careerBody: { flex: 1 },
+  careerClub: { fontSize: 15, fontWeight: "500", color: COLORS.ink },
+  careerDetail: { fontSize: 13, color: COLORS.muted, marginTop: 2 },
+  empty: { paddingHorizontal: 16, marginTop: 32, alignItems: "center" },
+  emptyTitle: { fontSize: 16, fontWeight: "500", color: COLORS.ink },
+  emptyText: {
+    fontSize: 14,
+    color: COLORS.muted,
+    textAlign: "center",
+    marginTop: 4,
+  },
 });
