@@ -20,20 +20,30 @@ export type User = {
 
 export type OfferType = "player" | "staff";
 
+// Campos alineados con la entidad Jobs de la plataforma (back/.../jobs.entity.ts).
 export type Offer = {
   id: string;
   type: OfferType;
   flag: string;
   country: string;
-  region: string;
-  club: string;
+  region: string; // location
+  club: string; // organización que publica
   league: string;
   title: string;
-  salary: string;
+  salary: string; // incluye moneda, ej. "€800 / mes"
   posted: string;
   description: string;
-  requirements: string[];
-  benefits: string[];
+  positions: string[]; // posiciones o roles buscados
+  category: string; // Amateur / Semiprofesional / Profesional
+  sportGenres: string; // Masculino / Femenino / Ambos / Indistinto
+  contractDuration: string; // ej. "Temporada completa"
+  minExperience: string;
+  minAge: number | null;
+  maxAge: number | null;
+  euPassport: "Si" | "No";
+  availabilityToTravel: "Si" | "No";
+  extras: string[]; // beneficios (Alojamiento, Vuelos, ...)
+  requirements: string[]; // competencias requeridas
 };
 
 export const MOCK_OFFERS: Offer[] = [
@@ -42,88 +52,125 @@ export const MOCK_OFFERS: Offer[] = [
     type: "player",
     flag: "🇮🇹",
     country: "Italia",
-    region: "Puglia",
+    region: "Bari, Puglia",
     club: "ASD Bari Nord",
     league: "Eccellenza",
     title: "Delantero Centro – Eccellenza",
-    salary: "€800",
-    posted: "Publicada hace 2 horas",
+    salary: "€800 / mes",
+    posted: "Hace 2 horas",
     description:
       "Club de Eccellenza busca delantero centro con buen juego de espaldas y definición. Temporada completa con posibilidad de renovación.",
-    requirements: [
-      "Mayor de 18 años",
-      "Pasaporte comunitario o permiso de residencia",
-      "Experiencia en categorías semiprofesionales",
-    ],
-    benefits: ["Alojamiento", "Salario mensual", "Seguro deportivo"],
+    positions: ["Delantero Centro"],
+    category: "Semiprofesional",
+    sportGenres: "Masculino",
+    contractDuration: "Temporada completa",
+    minExperience: "Semiprofesional",
+    minAge: 18,
+    maxAge: 30,
+    euPassport: "Si",
+    availabilityToTravel: "Si",
+    extras: ["Alojamiento", "Transporte", "Premios por rendimiento"],
+    requirements: ["Juego de espaldas", "Definición", "Trabajo en equipo"],
   },
   {
     id: "2",
     type: "player",
     flag: "🇮🇹",
     country: "Italia",
-    region: "Sicilia",
+    region: "Catania, Sicilia",
     club: "Pro Etna",
     league: "Promozione",
     title: "Portero – Promozione",
-    salary: "Da concordare",
-    posted: "Publicada hace 1 día",
+    salary: "€600 / mes",
+    posted: "Hace 5 horas",
     description:
-      "Buscamos portero con buena salida de balón para sumarse a la plantilla desde la próxima semana.",
-    requirements: ["Disponibilidad inmediata", "Altura mínima 1,85 m"],
-    benefits: ["Comidas incluidas", "Equipamiento del club"],
+      "Buscamos portero con buen juego de pies y liderazgo para la defensa. Entrenamientos de martes a jueves.",
+    positions: ["Portero"],
+    category: "Amateur",
+    sportGenres: "Masculino",
+    contractDuration: "Temporada completa",
+    minExperience: "Amateur",
+    minAge: 19,
+    maxAge: 35,
+    euPassport: "No",
+    availabilityToTravel: "No",
+    extras: ["Comida", "Gimnasio"],
+    requirements: ["Juego de pies", "Liderazgo", "Comunicación"],
   },
   {
     id: "3",
     type: "staff",
     flag: "🇦🇺",
     country: "Australia",
-    region: "Marden",
+    region: "Melbourne, Victoria",
     club: "Marden Sports FC",
-    league: "Liga amateur",
-    title: "Head Coach – Australia",
-    salary: "Negociable",
-    posted: "Publicada hace 3 días",
+    league: "NPL Victoria",
+    title: "Entrenador – Primer equipo",
+    salary: "AUD 3.500 / mes",
+    posted: "Ayer",
     description:
-      "Club amateur busca entrenador principal para dirigir al primer equipo y coordinar las categorías juveniles.",
-    requirements: [
-      "Licencia de entrenador vigente",
-      "Inglés fluido",
-      "Experiencia dirigiendo equipos adultos",
-    ],
-    benefits: ["Visa de trabajo asistida", "Alojamiento los primeros meses"],
+      "El club busca entrenador para su primer equipo masculino con licencia vigente y experiencia en fútbol formativo y competitivo.",
+    positions: ["Entrenador"],
+    category: "Profesional",
+    sportGenres: "Masculino",
+    contractDuration: "2 temporadas",
+    minExperience: "Profesional",
+    minAge: 28,
+    maxAge: null,
+    euPassport: "No",
+    availabilityToTravel: "Si",
+    extras: ["Alojamiento", "Vuelos", "Auto"],
+    requirements: ["Licencia de entrenador", "Inglés intermedio", "Análisis de video"],
   },
   {
     id: "4",
     type: "player",
     flag: "🇷🇴",
     country: "Rumania",
-    region: "Bucarest",
+    region: "Cluj-Napoca",
     club: "CS Dinamic",
     league: "Liga 2",
     title: "Mediocampista Central – Liga 2",
-    salary: "Negociable",
-    posted: "Publicada hace 3 días",
+    salary: "€1.200 / mes",
+    posted: "Hace 2 días",
     description:
-      "Equipo de Liga 2 busca mediocampista central con lectura de juego y buen pase corto.",
-    requirements: ["Experiencia profesional", "Pasaporte de la UE"],
-    benefits: ["Salario mensual", "Vivienda"],
+      "Mediocampista con visión de juego y buen pase para un equipo que busca el ascenso.",
+    positions: ["Mediocampista Central", "Mediocampista Defensivo"],
+    category: "Profesional",
+    sportGenres: "Masculino",
+    contractDuration: "1 año",
+    minExperience: "Profesional",
+    minAge: 20,
+    maxAge: 32,
+    euPassport: "Si",
+    availabilityToTravel: "Si",
+    extras: ["Alojamiento", "Comida", "Premios por rendimiento"],
+    requirements: ["Visión de juego", "Buen pase", "Intensidad"],
   },
   {
     id: "5",
     type: "staff",
     flag: "🇮🇹",
     country: "Italia",
-    region: "Veneto",
+    region: "Verona, Véneto",
     club: "Polisportiva Verona Sud",
     league: "Prima Categoria",
-    title: "Preparador físico – Prima Categoria",
-    salary: "€600",
-    posted: "Publicada hace 5 días",
+    title: "Preparador Físico – Prima Categoria",
+    salary: "€700 / mes",
+    posted: "Hace 3 días",
     description:
-      "Buscamos preparador físico para trabajar con el primer equipo, con enfoque en prevención de lesiones.",
-    requirements: ["Título en ciencias del deporte", "Disponibilidad vespertina"],
-    benefits: ["Contrato anual", "Posibilidad de crecimiento en el club"],
+      "Buscamos preparador físico para planificar la carga de entrenamiento y la prevención de lesiones del plantel.",
+    positions: ["Preparador Físico"],
+    category: "Amateur",
+    sportGenres: "Indistinto",
+    contractDuration: "Temporada completa",
+    minExperience: "Amateur",
+    minAge: 23,
+    maxAge: null,
+    euPassport: "Si",
+    availabilityToTravel: "No",
+    extras: ["Transporte", "Viáticos"],
+    requirements: ["Título en educación física", "Planificación", "Prevención de lesiones"],
   },
 ];
 

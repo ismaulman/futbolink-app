@@ -26,7 +26,9 @@ export default function OfferCard({ offer, applied, onOpen, onApply }: Props) {
       <Text style={styles.club}>
         {offer.club} · {offer.league}
       </Text>
-      <Text style={styles.salary}>{offer.salary}</Text>
+      <Text style={styles.salary}>
+        {offer.salary} · {offer.category}
+      </Text>
 
       <View style={styles.footer}>
         <Text style={styles.posted}>{offer.posted}</Text>

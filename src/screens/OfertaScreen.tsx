@@ -11,6 +11,22 @@ type Props = {
   onApply: () => void;
 };
 
+function ageRange(min: number | null, max: number | null) {
+  if (min && max) return `${min} a ${max} años`;
+  if (min) return `Desde ${min} años`;
+  if (max) return `Hasta ${max} años`;
+  return "Sin límite";
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={styles.row}>
+      <Text style={styles.rowLabel}>{label}</Text>
+      <Text style={styles.rowValue}>{value}</Text>
+    </View>
+  );
+}
+
 export default function OfertaScreen({ offer, applied, onBack, onApply }: Props) {
   return (
     <View style={styles.screen}>
@@ -33,15 +49,23 @@ export default function OfertaScreen({ offer, applied, onBack, onApply }: Props)
           {offer.club} · {offer.league}
         </Text>
 
-        <View style={styles.salaryBox}>
-          <Text style={styles.salaryLabel}>SALARIO</Text>
-          <Text style={styles.salary}>{offer.salary}</Text>
+        <Text style={styles.salary}>{offer.salary}</Text>
+
+        <View style={styles.list}>
+          <Row label={offer.type === "player" ? "Posiciones" : "Rol"} value={offer.positions.join(", ")} />
+          <Row label="Categoría" value={offer.category} />
+          <Row label="Contrato" value={offer.contractDuration} />
+          <Row label="Género" value={offer.sportGenres} />
+          <Row label="Experiencia mínima" value={offer.minExperience} />
+          <Row label="Edad" value={ageRange(offer.minAge, offer.maxAge)} />
+          <Row label="Pasaporte UE" value={offer.euPassport === "Si" ? "Requerido" : "No requerido"} />
+          <Row label="Disponibilidad para viajar" value={offer.availabilityToTravel === "Si" ? "Sí" : "No"} />
         </View>
 
         <Text style={styles.sectionTitle}>Descripción</Text>
         <Text style={styles.body}>{offer.description}</Text>
 
-        <Text style={styles.sectionTitle}>Requisitos</Text>
+        <Text style={styles.sectionTitle}>Competencias</Text>
         {offer.requirements.map((item) => (
           <View key={item} style={styles.bulletRow}>
             <Ionicons name="checkmark" size={16} color={COLORS.primaryDark} />
@@ -50,7 +74,7 @@ export default function OfertaScreen({ offer, applied, onBack, onApply }: Props)
         ))}
 
         <Text style={styles.sectionTitle}>Beneficios</Text>
-        {offer.benefits.map((item) => (
+        {offer.extras.map((item) => (
           <View key={item} style={styles.bulletRow}>
             <Ionicons name="add-circle-outline" size={16} color={COLORS.primaryDark} />
             <Text style={styles.bulletText}>{item}</Text>
@@ -108,21 +132,18 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   club: { fontSize: 14, color: COLORS.muted, marginTop: 4 },
-  salaryBox: {
-    marginTop: 16,
-    padding: 14,
-    borderRadius: RADIUS.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.white,
+  salary: { fontSize: 18, fontWeight: "500", color: COLORS.ink, marginTop: 12 },
+  list: { marginTop: 12, borderTopWidth: 1, borderTopColor: COLORS.divider },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 16,
+    paddingVertical: 11,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.divider,
   },
-  salaryLabel: {
-    fontSize: 10,
-    fontWeight: "500",
-    letterSpacing: 0.6,
-    color: COLORS.subtle,
-  },
-  salary: { fontSize: 20, fontWeight: "500", color: COLORS.ink, marginTop: 2 },
+  rowLabel: { fontSize: 14, color: COLORS.muted },
+  rowValue: { flex: 1, fontSize: 14, color: COLORS.ink, textAlign: "right" },
   sectionTitle: {
     fontSize: 15,
     fontWeight: "500",
