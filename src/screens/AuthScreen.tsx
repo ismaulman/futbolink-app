@@ -50,10 +50,10 @@ export default function AuthScreen({ onSubmit }: Props) {
       setError("Ingresá un email válido.");
       return;
     }
-    if (password.length < (isRegister ? 6 : 1)) {
+    if (password.length < (isRegister ? 8 : 1)) {
       setError(
         isRegister
-          ? "La contraseña debe tener al menos 6 caracteres."
+          ? "La contraseña debe tener al menos 8 caracteres."
           : "Ingresá tu contraseña.",
       );
       return;
@@ -136,7 +136,7 @@ export default function AuthScreen({ onSubmit }: Props) {
               <TextInput
                 value={password}
                 onChangeText={setPassword}
-                placeholder={isRegister ? "Mínimo 6 caracteres" : "Tu contraseña"}
+                placeholder={isRegister ? "Mínimo 8 caracteres" : "Tu contraseña"}
                 placeholderTextColor={COLORS.subtle}
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
@@ -168,7 +168,7 @@ export default function AuthScreen({ onSubmit }: Props) {
                     <Ionicons
                       name={active ? "radio-button-on" : "radio-button-off"}
                       size={20}
-                      color={active ? COLORS.green : COLORS.subtle}
+                      color={active ? COLORS.primaryDark : COLORS.subtle}
                     />
                     <View style={styles.roleBody}>
                       <Text style={styles.roleLabel}>{item.label}</Text>
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   logo: {
     fontSize: 32,
     fontWeight: "800",
-    color: COLORS.green,
+    color: COLORS.brand,
     textAlign: "center",
   },
   tagline: {
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 3,
     borderRadius: RADIUS.sm,
-    backgroundColor: "#f3f4f6",
+    backgroundColor: COLORS.surface,
     marginBottom: 16,
   },
   segmentItem: {
@@ -250,23 +250,23 @@ const styles = StyleSheet.create({
   },
   segmentActive: { backgroundColor: COLORS.white },
   segmentText: { fontSize: 13, fontWeight: "600", color: COLORS.muted },
-  segmentTextActive: { color: COLORS.greenDark },
+  segmentTextActive: { color: COLORS.ink },
   field: { marginBottom: 14 },
   label: {
     fontSize: 12,
     fontWeight: "600",
-    color: COLORS.text,
+    color: COLORS.ink,
     marginBottom: 6,
   },
   input: {
     paddingHorizontal: 12,
     paddingVertical: 11,
     fontSize: 14,
-    color: COLORS.text,
+    color: COLORS.ink,
     borderRadius: RADIUS.sm,
     borderWidth: 1,
     borderColor: COLORS.border,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.surface,
   },
   passwordBox: {
     flexDirection: "row",
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 11,
     fontSize: 14,
-    color: COLORS.text,
+    color: COLORS.ink,
   },
   roleCard: {
     flexDirection: "row",
@@ -295,23 +295,24 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   roleCardActive: {
-    borderColor: COLORS.green,
-    backgroundColor: COLORS.greenLight,
+    borderColor: COLORS.primary,
+    backgroundColor: COLORS.primarySoft,
   },
   roleBody: { flex: 1 },
-  roleLabel: { fontSize: 14, fontWeight: "700", color: COLORS.text },
+  roleLabel: { fontSize: 14, fontWeight: "700", color: COLORS.ink },
   roleDescription: { fontSize: 12, color: COLORS.muted, marginTop: 1 },
-  error: { fontSize: 13, color: "#b91c1c", marginBottom: 12 },
+  error: { fontSize: 13, color: COLORS.danger, marginBottom: 12 },
   submit: {
-    backgroundColor: COLORS.green,
-    borderRadius: RADIUS.md,
-    paddingVertical: 14,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.sm,
+    height: 44,
+    justifyContent: "center",
     alignItems: "center",
   },
   submitText: { fontSize: 15, fontWeight: "700", color: COLORS.white },
   forgot: {
     fontSize: 13,
-    color: COLORS.green,
+    color: COLORS.primaryDark,
     textAlign: "center",
     marginTop: 14,
     fontWeight: "600",

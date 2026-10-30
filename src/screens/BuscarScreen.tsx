@@ -32,7 +32,7 @@ function PlayerCard({ player }: { player: Player }) {
             {player.name}
           </Text>
           {player.verified && (
-            <Ionicons name="checkmark-circle" size={16} color={COLORS.green} />
+            <Ionicons name="checkmark-circle" size={16} color={COLORS.primaryDark} />
           )}
         </View>
         <Text style={styles.meta}>
@@ -119,7 +119,7 @@ export default function BuscarScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   header: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
-  heading: { fontSize: 26, fontWeight: "800", color: COLORS.greenDark },
+  heading: { fontSize: 24, fontWeight: "700", color: COLORS.ink },
   subheading: { fontSize: 13, color: COLORS.muted, marginTop: 2 },
   searchBox: {
     flexDirection: "row",
@@ -130,21 +130,24 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.sm,
     borderWidth: 1,
     borderColor: COLORS.border,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.surface,
   },
-  input: { flex: 1, paddingVertical: 10, fontSize: 14, color: COLORS.text },
+  input: { flex: 1, paddingVertical: 10, fontSize: 14, color: COLORS.ink },
   chipsRow: { gap: 8, paddingTop: 12 },
   chip: {
     paddingHorizontal: 14,
     paddingVertical: 8,
-    borderRadius: RADIUS.sm,
+    borderRadius: RADIUS.pill,
     borderWidth: 1,
     borderColor: COLORS.border,
     backgroundColor: COLORS.white,
   },
-  chipActive: { backgroundColor: COLORS.green, borderColor: COLORS.green },
+  chipActive: {
+    backgroundColor: COLORS.primarySoft,
+    borderColor: COLORS.primaryBorder,
+  },
   chipText: { fontSize: 13, fontWeight: "600", color: COLORS.muted },
-  chipTextActive: { color: COLORS.white },
+  chipTextActive: { color: COLORS.primaryDark },
   list: { padding: 16, gap: 10 },
   card: {
     flexDirection: "row",
@@ -160,14 +163,14 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: COLORS.greenLight,
+    backgroundColor: COLORS.primarySoft,
     alignItems: "center",
     justifyContent: "center",
   },
-  avatarText: { fontSize: 15, fontWeight: "800", color: COLORS.green },
+  avatarText: { fontSize: 15, fontWeight: "800", color: COLORS.primaryDark },
   cardBody: { flex: 1 },
   nameRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  name: { fontSize: 15, fontWeight: "700", color: COLORS.text, flexShrink: 1 },
+  name: { fontSize: 15, fontWeight: "700", color: COLORS.ink, flexShrink: 1 },
   meta: { fontSize: 12, color: COLORS.muted, marginTop: 2 },
   empty: { textAlign: "center", color: COLORS.muted, marginTop: 32 },
 });

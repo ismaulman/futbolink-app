@@ -15,7 +15,7 @@ export default function OfertaScreen({ offer, applied, onBack, onApply }: Props)
     <View style={styles.screen}>
       <View style={styles.topBar}>
         <Pressable onPress={onBack} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={22} color={COLORS.greenDark} />
+          <Ionicons name="arrow-back" size={22} color={COLORS.ink} />
         </Pressable>
         <Text style={styles.topTitle}>Oferta</Text>
       </View>
@@ -43,7 +43,7 @@ export default function OfertaScreen({ offer, applied, onBack, onApply }: Props)
         <Text style={styles.sectionTitle}>Requisitos</Text>
         {offer.requirements.map((item) => (
           <View key={item} style={styles.bulletRow}>
-            <Ionicons name="checkmark" size={16} color={COLORS.green} />
+            <Ionicons name="checkmark" size={16} color={COLORS.primaryDark} />
             <Text style={styles.bulletText}>{item}</Text>
           </View>
         ))}
@@ -51,7 +51,7 @@ export default function OfertaScreen({ offer, applied, onBack, onApply }: Props)
         <Text style={styles.sectionTitle}>Beneficios</Text>
         {offer.benefits.map((item) => (
           <View key={item} style={styles.bulletRow}>
-            <Ionicons name="add-circle-outline" size={16} color={COLORS.green} />
+            <Ionicons name="add-circle-outline" size={16} color={COLORS.primaryDark} />
             <Text style={styles.bulletText}>{item}</Text>
           </View>
         ))}
@@ -97,13 +97,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  topTitle: { fontSize: 16, fontWeight: "700", color: COLORS.greenDark },
+  topTitle: { fontSize: 16, fontWeight: "700", color: COLORS.ink },
   content: { padding: 16, paddingBottom: 24 },
   location: { fontSize: 12, color: COLORS.muted },
   title: {
     fontSize: 22,
-    fontWeight: "800",
-    color: COLORS.text,
+    fontWeight: "700",
+    color: COLORS.ink,
     marginTop: 4,
   },
   club: { fontSize: 14, color: COLORS.muted, marginTop: 4 },
@@ -121,22 +121,22 @@ const styles = StyleSheet.create({
     letterSpacing: 0.6,
     color: COLORS.subtle,
   },
-  salary: { fontSize: 20, fontWeight: "800", color: COLORS.green, marginTop: 2 },
+  salary: { fontSize: 20, fontWeight: "700", color: COLORS.ink, marginTop: 2 },
   sectionTitle: {
     fontSize: 15,
     fontWeight: "700",
-    color: COLORS.greenDark,
+    color: COLORS.ink,
     marginTop: 20,
     marginBottom: 8,
   },
-  body: { fontSize: 14, lineHeight: 21, color: COLORS.text },
+  body: { fontSize: 14, lineHeight: 21, color: COLORS.ink },
   bulletRow: {
     flexDirection: "row",
     alignItems: "flex-start",
     gap: 8,
     marginBottom: 6,
   },
-  bulletText: { flex: 1, fontSize: 14, lineHeight: 20, color: COLORS.text },
+  bulletText: { flex: 1, fontSize: 14, lineHeight: 20, color: COLORS.ink },
   posted: { fontSize: 12, color: COLORS.muted, marginTop: 20 },
   footer: {
     padding: 16,
@@ -145,16 +145,17 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   applyButton: {
-    backgroundColor: COLORS.green,
-    borderRadius: RADIUS.md,
-    paddingVertical: 14,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.sm,
+    height: 44,
+    justifyContent: "center",
     alignItems: "center",
   },
   appliedButton: {
-    backgroundColor: COLORS.greenLight,
+    backgroundColor: COLORS.primarySoft,
     borderWidth: 1,
-    borderColor: COLORS.green,
+    borderColor: COLORS.primary,
   },
   applyText: { fontSize: 15, fontWeight: "700", color: COLORS.white },
-  appliedText: { color: COLORS.green },
+  appliedText: { color: COLORS.primaryDark },
 });

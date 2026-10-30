@@ -35,7 +35,7 @@ export default function TabBar({ active, onChange }: Props) {
             <Ionicons
               name={isActive ? tab.iconActive : tab.icon}
               size={22}
-              color={isActive ? COLORS.green : COLORS.muted}
+              color={isActive ? COLORS.primary : COLORS.subtle}
             />
             <Text style={[styles.label, isActive && styles.labelActive]}>
               {tab.label}
@@ -61,5 +61,5 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   label: { fontSize: 11, color: COLORS.muted, fontWeight: "600" },
-  labelActive: { color: COLORS.green },
+  labelActive: { color: COLORS.primary },
 });
