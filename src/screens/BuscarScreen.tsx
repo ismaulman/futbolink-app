@@ -29,8 +29,9 @@ function PlayerCard({ player }: { player: Player }) {
             <Ionicons name="checkmark-circle" size={16} color={COLORS.primaryDark} />
           )}
         </View>
+        <Text style={styles.position}>{player.position}</Text>
         <Text style={styles.meta}>
-          {player.position} · {player.age} años
+          {player.age} años · {player.height} · {player.category}
         </Text>
         <Text style={styles.meta}>
           {player.flag} {player.country} · {player.club}
@@ -166,6 +167,7 @@ const styles = StyleSheet.create({
   cardBody: { flex: 1 },
   nameRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   name: { fontSize: 15, fontWeight: "500", color: COLORS.ink, flexShrink: 1 },
+  position: { fontSize: 14, color: COLORS.ink, marginTop: 2 },
   meta: { fontSize: 12, color: COLORS.muted, marginTop: 2 },
   empty: { textAlign: "center", color: COLORS.muted, marginTop: 32 },
 });

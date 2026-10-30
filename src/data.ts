@@ -178,19 +178,32 @@ export type Player = {
   id: string;
   name: string;
   age: number;
-  position: string;
+  position: string; // una de las 12 posiciones del catálogo real
+  secondaryPosition?: string;
+  foot: "Derecho" | "Izquierdo" | "Ambos";
+  height: string;
+  category: "Amateur" | "Semiprofesional" | "Profesional";
   flag: string;
   country: string;
   club: string;
   verified: boolean;
 };
 
+// Posiciones del catálogo de la plataforma (job-offer.catalog.ts).
 export const POSITIONS = [
   "Todas",
   "Portero",
-  "Defensor",
-  "Mediocampista",
-  "Delantero",
+  "Lateral Izquierdo",
+  "Defensor Central Izquierdo",
+  "Defensor Central Derecho",
+  "Lateral Derecho",
+  "Mediocampista Defensivo",
+  "Mediocampista Central",
+  "Mediocampista Derecho",
+  "Mediocampista Ofensivo",
+  "Extremo Izquierdo",
+  "Delantero Centro",
+  "Extremo Derecho",
 ];
 
 export const MOCK_PLAYERS: Player[] = [
@@ -198,7 +211,11 @@ export const MOCK_PLAYERS: Player[] = [
     id: "p1",
     name: "Lucas Fernández",
     age: 22,
-    position: "Delantero",
+    position: "Delantero Centro",
+    secondaryPosition: "Extremo Derecho",
+    foot: "Derecho",
+    height: "1,82 m",
+    category: "Semiprofesional",
     flag: "🇦🇷",
     country: "Argentina",
     club: "Club Atlético Sur",
@@ -208,7 +225,11 @@ export const MOCK_PLAYERS: Player[] = [
     id: "p2",
     name: "Matteo Rossi",
     age: 24,
-    position: "Mediocampista",
+    position: "Mediocampista Central",
+    secondaryPosition: "Mediocampista Defensivo",
+    foot: "Ambos",
+    height: "1,79 m",
+    category: "Profesional",
     flag: "🇮🇹",
     country: "Italia",
     club: "ASD Napoli Est",
@@ -218,7 +239,11 @@ export const MOCK_PLAYERS: Player[] = [
     id: "p3",
     name: "Diego Ramírez",
     age: 27,
-    position: "Defensor",
+    position: "Defensor Central Derecho",
+    secondaryPosition: "Lateral Derecho",
+    foot: "Derecho",
+    height: "1,85 m",
+    category: "Profesional",
     flag: "🇪🇸",
     country: "España",
     club: "CD Valencia B",
@@ -229,6 +254,9 @@ export const MOCK_PLAYERS: Player[] = [
     name: "Andrei Popescu",
     age: 20,
     position: "Portero",
+    foot: "Derecho",
+    height: "1,90 m",
+    category: "Semiprofesional",
     flag: "🇷🇴",
     country: "Rumania",
     club: "CS Dinamic",
@@ -236,29 +264,35 @@ export const MOCK_PLAYERS: Player[] = [
   },
   {
     id: "p5",
-    name: "Thiago Souza",
-    age: 25,
-    position: "Delantero",
-    flag: "🇧🇷",
-    country: "Brasil",
-    club: "EC Vitória Jr",
-    verified: true,
+    name: "Tomás Peralta",
+    age: 19,
+    position: "Extremo Izquierdo",
+    foot: "Izquierdo",
+    height: "1,74 m",
+    category: "Amateur",
+    flag: "🇺🇾",
+    country: "Uruguay",
+    club: "Juventud Unida",
+    verified: false,
   },
   {
     id: "p6",
-    name: "Nicolás Pereyra",
-    age: 23,
-    position: "Mediocampista",
-    flag: "🇺🇾",
-    country: "Uruguay",
-    club: "Racing de Montevideo",
-    verified: false,
+    name: "Gabriele Conti",
+    age: 26,
+    position: "Lateral Izquierdo",
+    foot: "Izquierdo",
+    height: "1,77 m",
+    category: "Semiprofesional",
+    flag: "🇮🇹",
+    country: "Italia",
+    club: "Pro Etna",
+    verified: true,
   },
 ];
 
 export const MY_PROFILE = {
   name: "Ismael Ulman",
-  position: "Mediocampista",
+  position: "Mediocampista Central",
   flag: "🇦🇷",
   country: "Argentina",
   verified: true,
