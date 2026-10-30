@@ -111,7 +111,7 @@ export default function PerfilScreen({ user, appliedCount, onLogout }: Props) {
           <Text style={styles.emptyTitle}>Completá tu perfil</Text>
           <Text style={styles.emptyText}>
             Acá vas a poder cargar tu experiencia y los datos de tu{" "}
-            {user.role === "agency" ? "agencia" : "trabajo"}.
+            {user.role === "agency" ? "agencia" : user.role === "club" ? "club" : "trabajo"}.
           </Text>
         </View>
       )}

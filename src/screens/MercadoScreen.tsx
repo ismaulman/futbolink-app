@@ -29,7 +29,6 @@ export default function MercadoScreen({ appliedIds, onOpenOffer, onApply }: Prop
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
-        <Text style={styles.logo}>FutboLink</Text>
         <Text style={styles.heading}>Mercado</Text>
         <Text style={styles.subheading}>
           {offers.length} oportunidades encontradas
@@ -74,13 +73,6 @@ export default function MercadoScreen({ appliedIds, onOpenOffer, onApply }: Prop
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   header: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
-  logo: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: COLORS.primaryDark,
-    letterSpacing: 0.5,
-    marginBottom: 6,
-  },
   heading: { fontSize: 22, fontWeight: "500", color: COLORS.ink },
   subheading: { fontSize: 13, color: COLORS.muted, marginTop: 2 },
   filtersRow: { flexDirection: "row", gap: 8, marginTop: 14 },

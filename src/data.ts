@@ -1,11 +1,15 @@
 // Datos de ejemplo. Más adelante esto se reemplaza por la API real.
 
-export type Role = "player" | "staff" | "agency";
+// Mismos tipos de cuenta que la plataforma: Futbolista, Staff, Agencia,
+// Reclutador y Club (los últimos tres son "ofertantes").
+export type Role = "player" | "staff" | "agency" | "recruiter" | "club";
 
 export const ROLES: { key: Role; label: string; description: string }[] = [
-  { key: "player", label: "Jugador", description: "Busco club u oportunidades" },
+  { key: "player", label: "Futbolista", description: "Busco club u oportunidades" },
   { key: "staff", label: "Staff", description: "Entrenador, preparador, analista…" },
   { key: "agency", label: "Agencia", description: "Represento o busco talento" },
+  { key: "recruiter", label: "Reclutador", description: "Busco talento para clubes" },
+  { key: "club", label: "Club", description: "Publico oportunidades y busco fichajes" },
 ];
 
 export type User = {

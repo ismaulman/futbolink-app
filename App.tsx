@@ -3,6 +3,7 @@ import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import TabBar, { TabKey } from "./src/components/TabBar";
+import TopBar from "./src/components/TopBar";
 import { Offer, User } from "./src/data";
 import AuthScreen from "./src/screens/AuthScreen";
 import BuscarScreen from "./src/screens/BuscarScreen";
@@ -46,6 +47,13 @@ export default function App() {
     );
   }
 
+  const initials = user.name
+    .split(" ")
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
   let content;
   if (selectedOffer) {
     content = (
@@ -81,6 +89,13 @@ export default function App() {
       <StatusBar style="dark" />
       <View style={styles.root}>
         <SafeAreaView style={styles.content} edges={["top"]}>
+          {!selectedOffer && tab !== "perfil" && (
+            <TopBar
+              initials={initials}
+              onAvatar={() => changeTab("perfil")}
+              onSearch={() => changeTab("buscar")}
+            />
+          )}
           {content}
         </SafeAreaView>
         <TabBar active={tab} onChange={changeTab} />
