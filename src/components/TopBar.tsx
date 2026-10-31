@@ -8,10 +8,12 @@ type Props = {
   initials: string;
   onAvatar: () => void;
   onSearch: () => void;
+  onMessages: () => void;
+  unreadCount: number;
 };
 
 // Barra superior estilo LinkedIn: avatar, buscador y mensajes.
-export default function TopBar({ initials, onAvatar, onSearch }: Props) {
+export default function TopBar({ initials, onAvatar, onSearch, onMessages, unreadCount }: Props) {
   const { t } = useTranslation();
   return (
     <View style={styles.bar}>
@@ -24,8 +26,13 @@ export default function TopBar({ initials, onAvatar, onSearch }: Props) {
         <Text style={styles.searchText}>{t("top.search")}</Text>
       </Pressable>
 
-      <Pressable hitSlop={10} accessibilityLabel={t("top.messages")}>
+      <Pressable onPress={onMessages} hitSlop={10} accessibilityLabel={t("top.messages")}>
         <Ionicons name="chatbubble-ellipses-outline" size={24} color={COLORS.ink} />
+        {unreadCount > 0 && (
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{unreadCount}</Text>
+          </View>
+        )}
       </Pressable>
     </View>
   );
@@ -63,5 +70,18 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.sm,
     backgroundColor: COLORS.divider,
   },
+  badge: {
+    position: "absolute",
+    top: -6,
+    right: -8,
+    minWidth: 18,
+    height: 18,
+    paddingHorizontal: 4,
+    borderRadius: 9,
+    backgroundColor: COLORS.danger,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  badgeText: { fontSize: 11, color: COLORS.white },
   searchText: { fontSize: 14, color: COLORS.muted },
 });

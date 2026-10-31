@@ -9,19 +9,25 @@ import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import "./src/i18n";
+import i18n from "./src/i18n";
 import TabBar, { TabKey } from "./src/components/TabBar";
 import TopBar from "./src/components/TopBar";
 import {
+  ChatMessage,
   INITIAL_PREFS,
   INITIAL_PROFILE,
+  MOCK_THREADS,
   NotificationPrefs,
   Offer,
   Player,
   Profile,
+  Thread,
   User,
 } from "./src/data";
 import AuthScreen from "./src/screens/AuthScreen";
 import EditProfileScreen from "./src/screens/EditProfileScreen";
+import MessagesScreen from "./src/screens/MessagesScreen";
+import ThreadScreen from "./src/screens/ThreadScreen";
 import BuscarScreen from "./src/screens/BuscarScreen";
 import MercadoScreen from "./src/screens/MercadoScreen";
 import OfertaScreen from "./src/screens/OfertaScreen";
@@ -44,7 +50,9 @@ export default function App() {
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [savedPlayerIds, setSavedPlayerIds] = useState<string[]>([]);
   const [proposalIds, setProposalIds] = useState<string[]>([]);
-  const [overlay, setOverlay] = useState<"edit" | "settings" | null>(null);
+  const [overlay, setOverlay] = useState<"edit" | "settings" | "messages" | null>(null);
+  const [threads, setThreads] = useState<Thread[]>(MOCK_THREADS);
+  const [openThreadId, setOpenThreadId] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile>(INITIAL_PROFILE);
   const [prefs, setPrefs] = useState<NotificationPrefs>(INITIAL_PREFS);
 
@@ -70,7 +78,37 @@ export default function App() {
     );
   };
 
+  const addMessage = (
+    threadId: string,
+    message: Omit<ChatMessage, "id" | "fromMe" | "hoursAgo">,
+    status?: Thread["status"],
+  ) => {
+    setThreads((current) =>
+      current.map((th) =>
+        th.id === threadId
+          ? {
+              ...th,
+              status: status ?? th.status,
+              hoursAgo: 0,
+              messages: [
+                ...th.messages,
+                { ...message, id: `${th.id}-${th.messages.length + 1}`, fromMe: true, hoursAgo: 0 },
+              ],
+            }
+          : th,
+      ),
+    );
+  };
+
+  const openThread = (thread: Thread) => {
+    setThreads((current) =>
+      current.map((th) => (th.id === thread.id ? { ...th, unread: false } : th)),
+    );
+    setOpenThreadId(thread.id);
+  };
+
   const changeTab = (next: TabKey) => {
+    setOpenThreadId(null);
     setSelectedOffer(null);
     setSelectedPlayer(null);
     setOverlay(null);
@@ -82,6 +120,8 @@ export default function App() {
     setTab("mercado");
     setSelectedOffer(null);
     setAppliedIds([]);
+    setThreads(MOCK_THREADS);
+    setOpenThreadId(null);
     setSavedIds([]);
     setSavedPlayerIds([]);
     setProposalIds([]);
@@ -113,8 +153,36 @@ export default function App() {
     .join("")
     .toUpperCase();
 
+  const openThreadData = threads.find((th) => th.id === openThreadId) ?? null;
+
   let content;
-  if (overlay === "edit") {
+  if (overlay === "messages" && openThreadData) {
+    content = (
+      <ThreadScreen
+        thread={openThreadData}
+        onBack={() => setOpenThreadId(null)}
+        onSend={(text) => addMessage(openThreadData.id, { body: text })}
+        onCounter={(text) =>
+          addMessage(openThreadData.id, { body: i18n.t("messages.counterPrefix") + text })
+        }
+        onRespond={(accept) =>
+          addMessage(
+            openThreadData.id,
+            { bodyKey: accept ? "messages.youAccepted" : "messages.youRejected" },
+            accept ? "ACCEPTED" : "REJECTED",
+          )
+        }
+      />
+    );
+  } else if (overlay === "messages") {
+    content = (
+      <MessagesScreen
+        threads={threads}
+        onOpen={openThread}
+        onBack={() => setOverlay(null)}
+      />
+    );
+  } else if (overlay === "edit") {
     content = (
       <EditProfileScreen
         name={user.name}
@@ -201,6 +269,12 @@ export default function App() {
               initials={initials}
               onAvatar={() => changeTab("perfil")}
               onSearch={() => changeTab("buscar")}
+              onMessages={() => {
+                setSelectedOffer(null);
+                setSelectedPlayer(null);
+                setOverlay("messages");
+              }}
+              unreadCount={threads.filter((th) => th.unread).length}
             />
           )}
           {content}

@@ -374,3 +374,111 @@ export const MY_PROFILE = {
     { year: "2020 – 2022", club: "Academia FutboLink", detail: "Formativas" },
   ],
 };
+
+// ---------- Mensajes y propuestas (forma alineada con message-thread.entity.ts)
+export type ThreadKind = "SYSTEM" | "PROPOSAL" | "PLAYER_PROP" | "OFFER_SHARE";
+export type ThreadStatus = "OPEN" | "ACCEPTED" | "REJECTED" | "EXPIRED";
+
+export type ChatMessage = {
+  id: string;
+  fromMe: boolean;
+  body?: string; // texto escrito por una persona
+  bodyKey?: string; // texto del sistema (se traduce)
+  hoursAgo: number;
+};
+
+export type Thread = {
+  id: string;
+  kind: ThreadKind;
+  subject?: string;
+  subjectKey?: string;
+  withName: string; // la otra parte
+  status: ThreadStatus;
+  unread: boolean;
+  iAmRecipient: boolean; // true: me escribieron; false: yo envié
+  hoursAgo: number; // último mensaje
+  messages: ChatMessage[];
+};
+
+export const MOCK_THREADS: Thread[] = [
+  {
+    id: "t1",
+    kind: "PROPOSAL",
+    subject: "Propuesta: Delantero Centro – Eccellenza",
+    withName: "ASD Bari Nord",
+    status: "OPEN",
+    unread: true,
+    iAmRecipient: true,
+    hoursAgo: 3,
+    messages: [
+      {
+        id: "t1m1",
+        fromMe: false,
+        body: "Hola, vimos tu perfil y nos interesa que seas parte del plantel para la próxima temporada. Ofrecemos €800 mensuales y alojamiento.",
+        hoursAgo: 3,
+      },
+    ],
+  },
+  {
+    id: "t2",
+    kind: "SYSTEM",
+    subjectKey: "sys.welcomeSubject",
+    withName: "FutboLink",
+    status: "OPEN",
+    unread: true,
+    iAmRecipient: true,
+    hoursAgo: 30,
+    messages: [{ id: "t2m1", fromMe: false, bodyKey: "sys.welcomeBody", hoursAgo: 30 }],
+  },
+  {
+    id: "t3",
+    kind: "OFFER_SHARE",
+    subject: "Oferta compartida: Preparador Físico – Prima Categoria",
+    withName: "Marco Bellini",
+    status: "OPEN",
+    unread: false,
+    iAmRecipient: true,
+    hoursAgo: 50,
+    messages: [
+      {
+        id: "t3m1",
+        fromMe: false,
+        body: "Te comparto esta oferta, creo que puede interesarte.",
+        hoursAgo: 50,
+      },
+    ],
+  },
+  {
+    id: "t4",
+    kind: "PROPOSAL",
+    subject: "Propuesta: Lateral Izquierdo – Promozione",
+    withName: "Pro Etna",
+    status: "ACCEPTED",
+    unread: false,
+    iAmRecipient: true,
+    hoursAgo: 120,
+    messages: [
+      { id: "t4m1", fromMe: false, body: "Te ofrecemos sumarte al plantel de Promozione.", hoursAgo: 140 },
+      { id: "t4m2", fromMe: true, body: "Acepto, muchas gracias.", hoursAgo: 125 },
+      { id: "t4m3", fromMe: false, body: "Perfecto, te escribimos con los detalles.", hoursAgo: 120 },
+    ],
+  },
+  {
+    id: "t5",
+    kind: "PLAYER_PROP",
+    subject: "Propuesta: Mediocampista Central – Liga 2",
+    withName: "CS Dinamic",
+    status: "OPEN",
+    unread: false,
+    iAmRecipient: false,
+    hoursAgo: 72,
+    messages: [
+      {
+        id: "t5m1",
+        fromMe: true,
+        body: "Hola, soy mediocampista y me interesa la oferta de Liga 2. Les dejo mi perfil.",
+        hoursAgo: 72,
+      },
+    ],
+  },
+];
