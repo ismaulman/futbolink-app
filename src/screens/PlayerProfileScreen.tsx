@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import Text from "../components/AppText";
+import VideoList from "../components/VideoList";
 import PositionPitch from "../components/PositionPitch";
 import ScreenHeader from "../components/ScreenHeader";
 import { Folder, Player, Role } from "../data";
@@ -134,6 +135,13 @@ export default function PlayerProfileScreen({
           <InfoRow label={t("profile.nationality")} value={tc(player.country)} />
           <InfoRow label={t("profile.currentClub")} value={player.club} />
         </View>
+
+        <Text style={styles.section}>{t("video.title")}</Text>
+        {player.videoUrls && player.videoUrls.length > 0 ? (
+          <VideoList urls={player.videoUrls} />
+        ) : (
+          <Text style={styles.positionLabel}>{t("video.none")}</Text>
+        )}
 
         <Text style={styles.section}>{t("profile.career")}</Text>
         <View style={styles.list}>

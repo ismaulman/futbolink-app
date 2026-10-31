@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import ChipGroup from "../components/ChipGroup";
 import Text from "../components/AppText";
 import Field from "../components/Field";
+import VideoList from "../components/VideoList";
+import { parseVideo } from "../video";
 import ScreenHeader from "../components/ScreenHeader";
 import { POSITIONS, Profile, Role } from "../data";
 import { tc } from "../i18n";
@@ -25,10 +27,20 @@ export default function EditProfileScreen({ name, role, profile, onSave, onBack 
   const [draftName, setDraftName] = useState(name);
   const [draft, setDraft] = useState<Profile>(profile);
   const [error, setError] = useState(false);
+  const [videoInput, setVideoInput] = useState("");
+  const [videoError, setVideoError] = useState(false);
   const isPlayer = role === "player";
   const positions = POSITIONS.filter((p) => p !== "Todas");
 
   const update = (patch: Partial<Profile>) => setDraft((d) => ({ ...d, ...patch }));
+
+  const addVideo = () => {
+    const video = parseVideo(videoInput);
+    if (!video) return setVideoError(true);
+    setVideoError(false);
+    setVideoInput("");
+    setDraft((d) => (d.videoUrls.includes(video.url) ? d : { ...d, videoUrls: [...d.videoUrls, video.url] }));
+  };
 
   const save = () => {
     if (draftName.trim().length < 2) {
@@ -109,6 +121,28 @@ export default function EditProfileScreen({ name, role, profile, onSave, onBack 
                 />
               </View>
             </View>
+            <Text style={[styles.section, styles.sectionGap]}>{t("video.title")}</Text>
+            <Text style={styles.help}>{t("video.help")}</Text>
+            <Field
+              label=""
+              value={videoInput}
+              onChangeText={(v) => {
+                setVideoInput(v);
+                setVideoError(false);
+              }}
+              placeholder={t("video.placeholder")}
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="url"
+            />
+            {videoError && <Text style={styles.error}>{t("video.invalid")}</Text>}
+            <Pressable onPress={addVideo} style={styles.addVideo}>
+              <Text style={styles.addVideoText}>{t("video.add")}</Text>
+            </Pressable>
+            <VideoList
+              urls={draft.videoUrls}
+              onRemove={(url) => update({ videoUrls: draft.videoUrls.filter((u) => u !== url) })}
+            />
           </>
         )}
       </ScrollView>
@@ -131,6 +165,17 @@ const styles = StyleSheet.create({
   section: { fontSize: 16, fontWeight: "500", color: COLORS.ink, marginBottom: 12 },
   sectionGap: { marginTop: 12 },
   error: { fontSize: 13, color: COLORS.danger, marginTop: -8, marginBottom: 12 },
+  help: { fontSize: 13, color: COLORS.muted, marginBottom: 8, lineHeight: 18 },
+  addVideo: {
+    height: 38,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  addVideoText: { fontSize: 14, fontWeight: "500", color: COLORS.ink },
   twoCols: { flexDirection: "row", gap: 12 },
   col: { flex: 1 },
   footer: {

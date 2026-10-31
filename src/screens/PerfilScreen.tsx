@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
+import VideoList from "../components/VideoList";
 import { MY_PROFILE, Profile, User } from "../data";
 import { COLORS, RADIUS } from "../theme";
 import { useTranslation } from "react-i18next";
@@ -110,6 +111,15 @@ export default function PerfilScreen({ user, profile, appliedCount, onEdit, onSe
             <InfoRow label={t("profile.weight")} value={`${profile.weightKg} kg`} />
             <InfoRow label={t("profile.foot")} value={tc(profile.foot)} />
             <InfoRow label={t("profile.currentClub")} value={MY_PROFILE.club || t("profile.noClub")} />
+          </View>
+
+          <Text style={styles.sectionTitle}>{t("video.title")}</Text>
+          <View style={styles.list}>
+            {profile.videoUrls.length === 0 ? (
+              <Text style={styles.careerDetail}>{t("video.none")}</Text>
+            ) : (
+              <VideoList urls={profile.videoUrls} />
+            )}
           </View>
 
           <Text style={styles.sectionTitle}>{t("profile.career")}</Text>

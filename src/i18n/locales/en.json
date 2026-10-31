@@ -401,5 +401,13 @@
   "news.cat_Internacional": "International",
   "countries.intro": "Where there are the most open offers and in how many leagues.",
   "countries.back": "Countries",
-  "countries.summary": "{{offers}} offers · {{leagues}} leagues"
+  "countries.summary": "{{offers}} offers · {{leagues}} leagues",
+  "video.title": "Videos",
+  "video.help": "Paste the link to your YouTube video and it appears on your profile.",
+  "video.placeholder": "https://www.youtube.com/watch?v=...",
+  "video.invalid": "That link is not from YouTube.",
+  "video.add": "Add video",
+  "video.remove": "Remove video",
+  "video.watch": "Watch video",
+  "video.none": "No videos yet."
 }

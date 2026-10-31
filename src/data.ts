@@ -203,6 +203,7 @@ export type Player = {
   weightKg: number;
   views: number;
   videos: number;
+  videoUrls?: string[];
   career: { years: string; club: string; detail: string }[];
 };
 
@@ -240,6 +241,7 @@ export const MOCK_PLAYERS: Player[] = [
     weightKg: 76,
     views: 420,
     videos: 3,
+    videoUrls: ["https://www.youtube.com/watch?v=jNQXAC9IVRw"],
     career: [
       { years: "2024 – hoy", club: "Club Atlético Sur", detail: "Primera local" },
       { years: "2021 – 2024", club: "Juventud Norte", detail: "Reserva" },
@@ -357,6 +359,7 @@ export type Profile = {
   foot: string; // skillfulFoot: Derecho / Izquierdo / Ambos
   heightCm: string;
   weightKg: string;
+  videoUrls: string[]; // links de YouTube
 };
 
 export const INITIAL_PROFILE: Profile = {
@@ -367,6 +370,7 @@ export const INITIAL_PROFILE: Profile = {
   foot: "Derecho",
   heightCm: "178",
   weightKg: "72",
+  videoUrls: [],
 };
 
 // Preferencias de notificación (PATCH /user/:id/notification-preferences).

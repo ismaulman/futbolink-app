@@ -401,5 +401,13 @@
   "news.cat_Internacional": "Internacional",
   "countries.intro": "Onde há mais ofertas abertas e em quantas ligas.",
   "countries.back": "Países",
-  "countries.summary": "{{offers}} ofertas · {{leagues}} ligas"
+  "countries.summary": "{{offers}} ofertas · {{leagues}} ligas",
+  "video.title": "Vídeos",
+  "video.help": "Cole o link do seu vídeo do YouTube e ele aparece no seu perfil.",
+  "video.placeholder": "https://www.youtube.com/watch?v=...",
+  "video.invalid": "Esse link não é do YouTube.",
+  "video.add": "Adicionar vídeo",
+  "video.remove": "Remover vídeo",
+  "video.watch": "Assistir vídeo",
+  "video.none": "Ainda não há vídeos."
 }
