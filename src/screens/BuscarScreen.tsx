@@ -1,11 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { FlatList, Pressable, StyleSheet, TextInput, View } from "react-native";
-import Text from "../components/AppText";
-import { tc } from "../i18n";
-import { MOCK_PLAYERS, POSITIONS, Player } from "../data";
-import { COLORS, RADIUS, FONT } from "../theme";
 import { useTranslation } from "react-i18next";
+import Text from "../components/AppText";
+import ChipGroup from "../components/ChipGroup";
+import { MOCK_PLAYERS, POSITIONS, Player } from "../data";
+import { tc } from "../i18n";
+import { COLORS, FONT, RADIUS } from "../theme";
+
+const ALL = "";
+const FEET = ["Derecho", "Izquierdo", "Ambos"];
+const unique = (values: string[]) => Array.from(new Set(values));
 
 function initials(name: string) {
   return name
@@ -16,10 +21,20 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-function PlayerCard({ player }: { player: Player }) {
+type CardProps = {
+  player: Player;
+  saved: boolean;
+  onOpen: () => void;
+  onToggleSave: () => void;
+};
+
+function PlayerCard({ player, saved, onOpen, onToggleSave }: CardProps) {
   const { t } = useTranslation();
   return (
-    <View style={styles.card}>
+    <Pressable
+      onPress={onOpen}
+      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+    >
       <View style={styles.avatar}>
         <Text style={styles.avatarText}>{initials(player.name)}</Text>
       </View>
@@ -40,44 +55,162 @@ function PlayerCard({ player }: { player: Player }) {
           {player.flag} {tc(player.country)} · {player.club}
         </Text>
       </View>
-    </View>
+      <Pressable
+        onPress={onToggleSave}
+        hitSlop={10}
+        accessibilityLabel={saved ? t("player.unsave") : t("player.save")}
+      >
+        <Ionicons
+          name={saved ? "bookmark" : "bookmark-outline"}
+          size={20}
+          color={saved ? COLORS.primary : COLORS.muted}
+        />
+      </Pressable>
+    </Pressable>
   );
 }
 
-export default function BuscarScreen() {
+type Props = {
+  savedIds: string[];
+  onOpenPlayer: (player: Player) => void;
+  onToggleSave: (playerId: string) => void;
+};
+
+export default function BuscarScreen({ savedIds, onOpenPlayer, onToggleSave }: Props) {
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
+  const [onlySaved, setOnlySaved] = useState(false);
   const [position, setPosition] = useState("Todas");
+  const [showFilters, setShowFilters] = useState(false);
+  const [country, setCountry] = useState(ALL);
+  const [category, setCategory] = useState(ALL);
+  const [foot, setFoot] = useState(ALL);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
+
+  const countries = useMemo(() => unique(MOCK_PLAYERS.map((p) => p.country)), []);
+  const categories = useMemo(() => unique(MOCK_PLAYERS.map((p) => p.category)), []);
+
+  const activeFilters =
+    [country, category, foot].filter((v) => v !== ALL).length + (verifiedOnly ? 1 : 0);
 
   const text = query.trim().toLowerCase();
   const players = MOCK_PLAYERS.filter((player) => {
-    const matchesPosition = position === "Todas" || player.position === position;
-    const matchesText =
+    if (onlySaved && !savedIds.includes(player.id)) return false;
+    if (position !== "Todas" && player.position !== position) return false;
+    if (country !== ALL && player.country !== country) return false;
+    if (category !== ALL && player.category !== category) return false;
+    if (foot !== ALL && player.foot !== foot) return false;
+    if (verifiedOnly && !player.verified) return false;
+    return (
       text === "" ||
       player.name.toLowerCase().includes(text) ||
       player.club.toLowerCase().includes(text) ||
-      player.country.toLowerCase().includes(text);
-    return matchesPosition && matchesText;
+      player.country.toLowerCase().includes(text)
+    );
   });
+
+  const withAll = (values: string[]) => [
+    { value: ALL, label: t("common.all") },
+    ...values.map((v) => ({ value: v, label: tc(v) })),
+  ];
+
+  const clearFilters = () => {
+    setCountry(ALL);
+    setCategory(ALL);
+    setFoot(ALL);
+    setVerifiedOnly(false);
+  };
 
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
         <Text style={styles.heading}>{t("search.title")}</Text>
-        <Text style={styles.subheading}>
-          {t("search.count", { count: players.length })}
-        </Text>
 
-        <View style={styles.searchBox}>
-          <Ionicons name="search" size={18} color={COLORS.muted} />
-          <TextInput
-            value={query}
-            onChangeText={setQuery}
-            placeholder={t("search.placeholder")}
-            placeholderTextColor={COLORS.subtle}
-            style={styles.input}
-          />
+        <View style={styles.views}>
+          {[
+            { saved: false, label: t("search.tabAll") },
+            { saved: true, label: t("search.tabSaved") },
+          ].map((item) => {
+            const active = onlySaved === item.saved;
+            return (
+              <Pressable
+                key={item.label}
+                onPress={() => setOnlySaved(item.saved)}
+                style={[styles.viewTab, active && styles.viewTabActive]}
+              >
+                <Text style={[styles.viewText, active && styles.viewTextActive]}>
+                  {item.label}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
+
+        <View style={styles.searchRow}>
+          <View style={styles.searchBox}>
+            <Ionicons name="search" size={18} color={COLORS.muted} />
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder={t("search.placeholder")}
+              placeholderTextColor={COLORS.subtle}
+              style={styles.input}
+            />
+          </View>
+          <Pressable
+            onPress={() => setShowFilters((v) => !v)}
+            style={[styles.filterButton, activeFilters > 0 && styles.chipActive]}
+            accessibilityLabel={t("search.filters")}
+          >
+            <Ionicons
+              name="options-outline"
+              size={20}
+              color={activeFilters > 0 ? COLORS.primaryDark : COLORS.ink}
+            />
+            {activeFilters > 0 && <Text style={styles.badge}>{activeFilters}</Text>}
+          </Pressable>
+        </View>
+
+        {showFilters && (
+          <View style={styles.panel}>
+            <ChipGroup
+              label={t("search.country")}
+              options={withAll(countries)}
+              value={country}
+              onChange={setCountry}
+            />
+            <ChipGroup
+              label={t("search.category")}
+              options={withAll(categories)}
+              value={category}
+              onChange={setCategory}
+            />
+            <ChipGroup
+              label={t("search.foot")}
+              options={withAll(FEET)}
+              value={foot}
+              onChange={setFoot}
+            />
+            <Pressable
+              onPress={() => setVerifiedOnly((v) => !v)}
+              style={[styles.chip, styles.verifiedChip, verifiedOnly && styles.chipActive]}
+            >
+              <Ionicons
+                name="checkmark-circle-outline"
+                size={16}
+                color={verifiedOnly ? COLORS.primaryDark : COLORS.muted}
+              />
+              <Text style={[styles.chipText, verifiedOnly && styles.chipTextActive]}>
+                {t("search.verifiedOnly")}
+              </Text>
+            </Pressable>
+            {activeFilters > 0 && (
+              <Pressable onPress={clearFilters}>
+                <Text style={styles.clear}>{t("search.clear")}</Text>
+              </Pressable>
+            )}
+          </View>
+        )}
 
         <FlatList
           horizontal
@@ -99,16 +232,27 @@ export default function BuscarScreen() {
             );
           }}
         />
+
+        <Text style={styles.subheading}>{t("search.count", { count: players.length })}</Text>
       </View>
 
       <FlatList
         data={players}
         keyExtractor={(player) => player.id}
-        renderItem={({ item }) => <PlayerCard player={item} />}
+        renderItem={({ item }) => (
+          <PlayerCard
+            player={item}
+            saved={savedIds.includes(item.id)}
+            onOpen={() => onOpenPlayer(item)}
+            onToggleSave={() => onToggleSave(item.id)}
+          />
+        )}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
-          <Text style={styles.empty}>{t("search.empty")}</Text>
+          <Text style={styles.empty}>
+            {onlySaved ? t("search.emptySaved") : t("search.empty")}
+          </Text>
         }
       />
     </View>
@@ -119,12 +263,27 @@ const styles = StyleSheet.create({
   screen: { flex: 1 },
   header: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
   heading: { fontSize: 22, fontWeight: "500", color: COLORS.ink },
-  subheading: { fontSize: 13, color: COLORS.muted, marginTop: 2 },
+  views: {
+    flexDirection: "row",
+    marginTop: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.divider,
+  },
+  viewTab: {
+    paddingVertical: 10,
+    marginRight: 20,
+    borderBottomWidth: 2,
+    borderBottomColor: "transparent",
+  },
+  viewTabActive: { borderBottomColor: COLORS.primary },
+  viewText: { fontSize: 14, color: COLORS.muted },
+  viewTextActive: { color: COLORS.ink, fontWeight: "500" },
+  searchRow: { flexDirection: "row", gap: 8, marginTop: 14 },
   searchBox: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    marginTop: 14,
     paddingHorizontal: 12,
     borderRadius: RADIUS.sm,
     borderWidth: 1,
@@ -132,7 +291,52 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
   },
   input: {
-    fontFamily: FONT.regular, flex: 1, paddingVertical: 10, fontSize: 14, color: COLORS.ink },
+    flex: 1,
+    fontFamily: FONT.regular,
+    paddingVertical: 10,
+    fontSize: 14,
+    color: COLORS.ink,
+  },
+  filterButton: {
+    width: 44,
+    height: 44,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.white,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  badge: {
+    position: "absolute",
+    top: -6,
+    right: -6,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    overflow: "hidden",
+    textAlign: "center",
+    lineHeight: 18,
+    fontSize: 11,
+    color: COLORS.white,
+    backgroundColor: COLORS.primary,
+  },
+  panel: {
+    marginTop: 12,
+    padding: 14,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.white,
+  },
+  verifiedChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    alignSelf: "flex-start",
+    marginBottom: 12,
+  },
+  clear: { fontSize: 13, fontWeight: "500", color: COLORS.primaryDark },
   chipsRow: { gap: 8, paddingTop: 12 },
   chip: {
     paddingHorizontal: 14,
@@ -148,6 +352,7 @@ const styles = StyleSheet.create({
   },
   chipText: { fontSize: 13, fontWeight: "500", color: COLORS.muted },
   chipTextActive: { color: COLORS.primaryDark },
+  subheading: { fontSize: 13, color: COLORS.muted, marginTop: 12 },
   list: { padding: 16, gap: 10 },
   card: {
     flexDirection: "row",
@@ -159,6 +364,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     backgroundColor: COLORS.white,
   },
+  cardPressed: { backgroundColor: COLORS.surface },
   avatar: {
     width: 48,
     height: 48,
@@ -173,5 +379,11 @@ const styles = StyleSheet.create({
   name: { fontSize: 15, fontWeight: "500", color: COLORS.ink, flexShrink: 1 },
   position: { fontSize: 14, color: COLORS.ink, marginTop: 2 },
   meta: { fontSize: 12, color: COLORS.muted, marginTop: 2 },
-  empty: { textAlign: "center", color: COLORS.muted, marginTop: 32 },
+  empty: {
+    textAlign: "center",
+    color: COLORS.muted,
+    marginTop: 32,
+    paddingHorizontal: 24,
+    lineHeight: 20,
+  },
 });

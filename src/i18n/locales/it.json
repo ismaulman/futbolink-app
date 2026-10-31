@@ -172,5 +172,20 @@
   "catalog.Rumania": "Romania",
   "catalog.Argentina": "Argentina",
   "catalog.España": "Spagna",
-  "catalog.Uruguay": "Uruguay"
+  "catalog.Uruguay": "Uruguay",
+  "player.profile": "Profilo",
+  "player.save": "Salva nella mia lista",
+  "player.unsave": "Rimuovi dalla mia lista",
+  "player.sendProposal": "Invia proposta",
+  "player.proposalSent": "Proposta inviata ✓",
+  "search.tabAll": "Tutti",
+  "search.tabSaved": "La mia lista",
+  "search.filters": "Filtri",
+  "search.clear": "Cancella",
+  "search.country": "Paese",
+  "search.category": "Categoria",
+  "search.foot": "Piede preferito",
+  "search.position": "Ruolo",
+  "search.verifiedOnly": "Solo verificati",
+  "search.emptySaved": "La tua lista è vuota. Tocca il segnalibro su un profilo per salvarlo."
 }

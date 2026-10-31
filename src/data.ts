@@ -182,6 +182,10 @@ export type Player = {
   country: string;
   club: string;
   verified: boolean;
+  weightKg: number;
+  views: number;
+  videos: number;
+  career: { years: string; club: string; detail: string }[];
 };
 
 // Posiciones del catálogo de la plataforma (job-offer.catalog.ts).
@@ -215,6 +219,13 @@ export const MOCK_PLAYERS: Player[] = [
     country: "Argentina",
     club: "Club Atlético Sur",
     verified: true,
+    weightKg: 76,
+    views: 420,
+    videos: 3,
+    career: [
+      { years: "2024 – hoy", club: "Club Atlético Sur", detail: "Primera local" },
+      { years: "2021 – 2024", club: "Juventud Norte", detail: "Reserva" },
+    ],
   },
   {
     id: "p2",
@@ -229,6 +240,13 @@ export const MOCK_PLAYERS: Player[] = [
     country: "Italia",
     club: "ASD Napoli Est",
     verified: true,
+    weightKg: 73,
+    views: 980,
+    videos: 5,
+    career: [
+      { years: "2023 – hoy", club: "ASD Napoli Est", detail: "Serie D" },
+      { years: "2020 – 2023", club: "US Salerno Giovani", detail: "Primavera" },
+    ],
   },
   {
     id: "p3",
@@ -243,6 +261,13 @@ export const MOCK_PLAYERS: Player[] = [
     country: "España",
     club: "CD Valencia B",
     verified: false,
+    weightKg: 82,
+    views: 310,
+    videos: 2,
+    career: [
+      { years: "2022 – hoy", club: "CD Valencia B", detail: "Segunda RFEF" },
+      { years: "2018 – 2022", club: "Levante Cantera", detail: "Juvenil A" },
+    ],
   },
   {
     id: "p4",
@@ -256,6 +281,13 @@ export const MOCK_PLAYERS: Player[] = [
     country: "Rumania",
     club: "CS Dinamic",
     verified: false,
+    weightKg: 84,
+    views: 150,
+    videos: 1,
+    career: [
+      { years: "2024 – hoy", club: "CS Dinamic", detail: "Liga 2" },
+      { years: "2021 – 2024", club: "Academia Cluj", detail: "Sub-19" },
+    ],
   },
   {
     id: "p5",
@@ -269,6 +301,12 @@ export const MOCK_PLAYERS: Player[] = [
     country: "Uruguay",
     club: "Juventud Unida",
     verified: false,
+    weightKg: 68,
+    views: 95,
+    videos: 2,
+    career: [
+      { years: "2024 – hoy", club: "Juventud Unida", detail: "Liga amateur" },
+    ],
   },
   {
     id: "p6",
@@ -282,6 +320,13 @@ export const MOCK_PLAYERS: Player[] = [
     country: "Italia",
     club: "Pro Etna",
     verified: true,
+    weightKg: 71,
+    views: 540,
+    videos: 4,
+    career: [
+      { years: "2023 – hoy", club: "Pro Etna", detail: "Promozione" },
+      { years: "2021 – 2023", club: "Catania Youth", detail: "Under 19" },
+    ],
   },
 ];
 

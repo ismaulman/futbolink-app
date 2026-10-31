@@ -16,6 +16,7 @@ import {
   INITIAL_PROFILE,
   NotificationPrefs,
   Offer,
+  Player,
   Profile,
   User,
 } from "./src/data";
@@ -24,6 +25,7 @@ import EditProfileScreen from "./src/screens/EditProfileScreen";
 import BuscarScreen from "./src/screens/BuscarScreen";
 import MercadoScreen from "./src/screens/MercadoScreen";
 import OfertaScreen from "./src/screens/OfertaScreen";
+import PlayerProfileScreen from "./src/screens/PlayerProfileScreen";
 import PerfilScreen from "./src/screens/PerfilScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import { COLORS } from "./src/theme";
@@ -39,6 +41,9 @@ export default function App() {
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [appliedIds, setAppliedIds] = useState<string[]>([]);
   const [savedIds, setSavedIds] = useState<string[]>([]);
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [savedPlayerIds, setSavedPlayerIds] = useState<string[]>([]);
+  const [proposalIds, setProposalIds] = useState<string[]>([]);
   const [overlay, setOverlay] = useState<"edit" | "settings" | null>(null);
   const [profile, setProfile] = useState<Profile>(INITIAL_PROFILE);
   const [prefs, setPrefs] = useState<NotificationPrefs>(INITIAL_PREFS);
@@ -57,8 +62,17 @@ export default function App() {
     );
   };
 
+  const toggleSavePlayer = (playerId: string) => {
+    setSavedPlayerIds((current) =>
+      current.includes(playerId)
+        ? current.filter((id) => id !== playerId)
+        : [...current, playerId],
+    );
+  };
+
   const changeTab = (next: TabKey) => {
     setSelectedOffer(null);
+    setSelectedPlayer(null);
     setOverlay(null);
     setTab(next);
   };
@@ -69,6 +83,9 @@ export default function App() {
     setSelectedOffer(null);
     setAppliedIds([]);
     setSavedIds([]);
+    setSavedPlayerIds([]);
+    setProposalIds([]);
+    setSelectedPlayer(null);
     setOverlay(null);
     setProfile(INITIAL_PROFILE);
     setPrefs(INITIAL_PREFS);
@@ -121,6 +138,20 @@ export default function App() {
         onBack={() => setOverlay(null)}
       />
     );
+  } else if (selectedPlayer) {
+    content = (
+      <PlayerProfileScreen
+        player={selectedPlayer}
+        viewerRole={user.role}
+        saved={savedPlayerIds.includes(selectedPlayer.id)}
+        proposalSent={proposalIds.includes(selectedPlayer.id)}
+        onToggleSave={() => toggleSavePlayer(selectedPlayer.id)}
+        onSendProposal={() =>
+          setProposalIds((c) => (c.includes(selectedPlayer.id) ? c : [...c, selectedPlayer.id]))
+        }
+        onBack={() => setSelectedPlayer(null)}
+      />
+    );
   } else if (selectedOffer) {
     content = (
       <OfertaScreen
@@ -141,7 +172,13 @@ export default function App() {
       />
     );
   } else if (tab === "buscar") {
-    content = <BuscarScreen />;
+    content = (
+      <BuscarScreen
+        savedIds={savedPlayerIds}
+        onOpenPlayer={setSelectedPlayer}
+        onToggleSave={toggleSavePlayer}
+      />
+    );
   } else {
     content = (
       <PerfilScreen
@@ -159,7 +196,7 @@ export default function App() {
       <StatusBar style="dark" />
       <View style={styles.root}>
         <SafeAreaView style={styles.content} edges={["top"]}>
-          {!selectedOffer && !overlay && tab !== "perfil" && (
+          {!selectedOffer && !selectedPlayer && !overlay && tab !== "perfil" && (
             <TopBar
               initials={initials}
               onAvatar={() => changeTab("perfil")}

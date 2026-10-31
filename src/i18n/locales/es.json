@@ -172,5 +172,20 @@
   "catalog.Rumania": "Rumania",
   "catalog.Argentina": "Argentina",
   "catalog.España": "España",
-  "catalog.Uruguay": "Uruguay"
+  "catalog.Uruguay": "Uruguay",
+  "player.profile": "Perfil",
+  "player.save": "Guardar en mi lista",
+  "player.unsave": "Quitar de mi lista",
+  "player.sendProposal": "Enviar propuesta",
+  "player.proposalSent": "Propuesta enviada ✓",
+  "search.tabAll": "Todos",
+  "search.tabSaved": "Mi lista",
+  "search.filters": "Filtros",
+  "search.clear": "Limpiar",
+  "search.country": "País",
+  "search.category": "Categoría",
+  "search.foot": "Pie hábil",
+  "search.position": "Posición",
+  "search.verifiedOnly": "Solo verificados",
+  "search.emptySaved": "Tu lista está vacía. Tocá el marcador en un perfil para guardarlo."
 }
