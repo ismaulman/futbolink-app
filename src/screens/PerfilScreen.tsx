@@ -1,15 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
-import { MY_PROFILE, User } from "../data";
+import { MY_PROFILE, Profile, User } from "../data";
 import { COLORS, RADIUS } from "../theme";
 import { useTranslation } from "react-i18next";
-import i18n, { LANGUAGES, tc } from "../i18n";
+import { tc } from "../i18n";
 
 type Props = {
   user: User;
+  profile: Profile;
   appliedCount: number;
-  onLogout: () => void;
+  onEdit: () => void;
+  onSettings: () => void;
 };
 
 function Stat({ value, label }: { value: string; label: string }) {
@@ -32,7 +34,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 // Perfil estilo Instagram/LinkedIn: avatar + números arriba, datos en listas
 // planas con divisores finos, sin cajas ni negritas pesadas.
-export default function PerfilScreen({ user, appliedCount, onLogout }: Props) {
+export default function PerfilScreen({ user, profile, appliedCount, onEdit, onSettings }: Props) {
   const { t } = useTranslation();
   const initials = user.name
     .split(" ")
@@ -50,8 +52,8 @@ export default function PerfilScreen({ user, appliedCount, onLogout }: Props) {
     >
       <View style={styles.topRow}>
         <Text style={styles.username}>{user.name}</Text>
-        <Pressable onPress={onLogout} hitSlop={10} accessibilityLabel={t("profile.logout")}>
-          <Ionicons name="log-out-outline" size={24} color={COLORS.ink} />
+        <Pressable onPress={onSettings} hitSlop={10} accessibilityLabel={t("profile.settings")}>
+          <Ionicons name="settings-outline" size={24} color={COLORS.ink} />
         </Pressable>
       </View>
 
@@ -70,13 +72,16 @@ export default function PerfilScreen({ user, appliedCount, onLogout }: Props) {
         <Text style={styles.name}>{user.name}</Text>
         <Text style={styles.role}>
           {roleLabel}
-          {isPlayer ? ` · ${tc(MY_PROFILE.position)}` : ""}
+          {isPlayer ? ` · ${tc(profile.position)}` : ""}
         </Text>
         <Text style={styles.email}>{user.email}</Text>
       </View>
 
       <View style={styles.actions}>
-        <Pressable style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
+        <Pressable
+          onPress={onEdit}
+          style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}
+        >
           <Text style={styles.actionText}>{t("profile.edit")}</Text>
         </Pressable>
         <Pressable style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
@@ -89,9 +94,18 @@ export default function PerfilScreen({ user, appliedCount, onLogout }: Props) {
         <>
           <Text style={styles.sectionTitle}>{t("profile.info")}</Text>
           <View style={styles.list}>
-            <InfoRow label={t("profile.position")} value={tc(MY_PROFILE.position)} />
-            <InfoRow label={t("profile.height")} value={MY_PROFILE.height} />
-            <InfoRow label={t("profile.foot")} value={tc(MY_PROFILE.foot)} />
+            <InfoRow label={t("profile.position")} value={tc(profile.position)} />
+            {profile.secondaryPosition !== "" && (
+              <InfoRow
+                label={t("profile.secondaryPosition")}
+                value={tc(profile.secondaryPosition)}
+              />
+            )}
+            <InfoRow label={t("profile.nationality")} value={profile.nationality} />
+            <InfoRow label={t("profile.location")} value={profile.location} />
+            <InfoRow label={t("profile.height")} value={`${profile.heightCm} cm`} />
+            <InfoRow label={t("profile.weight")} value={`${profile.weightKg} kg`} />
+            <InfoRow label={t("profile.foot")} value={tc(profile.foot)} />
             <InfoRow label={t("profile.currentClub")} value={MY_PROFILE.club || t("profile.noClub")} />
           </View>
 
@@ -126,23 +140,6 @@ export default function PerfilScreen({ user, appliedCount, onLogout }: Props) {
         </View>
       )}
 
-      <Text style={styles.sectionTitle}>{t("profile.language")}</Text>
-      <View style={styles.langRow}>
-        {LANGUAGES.map((lang) => {
-          const active = i18n.language === lang.code;
-          return (
-            <Pressable
-              key={lang.code}
-              onPress={() => i18n.changeLanguage(lang.code)}
-              style={[styles.langChip, active && styles.langChipActive]}
-            >
-              <Text style={[styles.langText, active && styles.langTextActive]}>
-                {lang.label}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
     </ScrollView>
   );
 }

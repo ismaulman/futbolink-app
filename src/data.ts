@@ -285,16 +285,43 @@ export const MOCK_PLAYERS: Player[] = [
   },
 ];
 
-export const MY_PROFILE = {
-  name: "Ismael Ulman",
+// Datos editables del perfil (mismos campos que la entidad User de la plataforma).
+export type Profile = {
+  nationality: string;
+  location: string;
+  position: string; // primaryPosition
+  secondaryPosition: string; // "" = ninguna
+  foot: string; // skillfulFoot: Derecho / Izquierdo / Ambos
+  heightCm: string;
+  weightKg: string;
+};
+
+export const INITIAL_PROFILE: Profile = {
+  nationality: "Argentina",
+  location: "Roma, Italia",
   position: "Mediocampista Central",
-  flag: "🇦🇷",
-  country: "Argentina",
+  secondaryPosition: "Mediocampista Defensivo",
+  foot: "Derecho",
+  heightCm: "178",
+  weightKg: "72",
+};
+
+// Preferencias de notificación (PATCH /user/:id/notification-preferences).
+export type NotificationPrefs = {
+  emailNotifyJobMatches: boolean;
+  emailNotifyTalentAlerts: boolean;
+};
+
+export const INITIAL_PREFS: NotificationPrefs = {
+  emailNotifyJobMatches: true,
+  emailNotifyTalentAlerts: true,
+};
+
+// Datos de ejemplo del perfil (estadísticas y trayectoria).
+export const MY_PROFILE = {
   verified: true,
   views: 1284,
   videoPlays: 342,
-  height: "1,78 m",
-  foot: "Derecho",
   club: "", // vacío = sin club (se muestra profile.noClub)
   career: [
     { year: "2024 – 2025", club: "Club Deportivo Norte", detail: "Liga regional" },

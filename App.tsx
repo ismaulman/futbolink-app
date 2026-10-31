@@ -11,12 +11,21 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import "./src/i18n";
 import TabBar, { TabKey } from "./src/components/TabBar";
 import TopBar from "./src/components/TopBar";
-import { Offer, User } from "./src/data";
+import {
+  INITIAL_PREFS,
+  INITIAL_PROFILE,
+  NotificationPrefs,
+  Offer,
+  Profile,
+  User,
+} from "./src/data";
 import AuthScreen from "./src/screens/AuthScreen";
+import EditProfileScreen from "./src/screens/EditProfileScreen";
 import BuscarScreen from "./src/screens/BuscarScreen";
 import MercadoScreen from "./src/screens/MercadoScreen";
 import OfertaScreen from "./src/screens/OfertaScreen";
 import PerfilScreen from "./src/screens/PerfilScreen";
+import SettingsScreen from "./src/screens/SettingsScreen";
 import { COLORS } from "./src/theme";
 
 export default function App() {
@@ -29,6 +38,9 @@ export default function App() {
   const [tab, setTab] = useState<TabKey>("mercado");
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [appliedIds, setAppliedIds] = useState<string[]>([]);
+  const [overlay, setOverlay] = useState<"edit" | "settings" | null>(null);
+  const [profile, setProfile] = useState<Profile>(INITIAL_PROFILE);
+  const [prefs, setPrefs] = useState<NotificationPrefs>(INITIAL_PREFS);
 
   const apply = (offerId: string) => {
     setAppliedIds((current) =>
@@ -38,6 +50,7 @@ export default function App() {
 
   const changeTab = (next: TabKey) => {
     setSelectedOffer(null);
+    setOverlay(null);
     setTab(next);
   };
 
@@ -46,6 +59,9 @@ export default function App() {
     setTab("mercado");
     setSelectedOffer(null);
     setAppliedIds([]);
+    setOverlay(null);
+    setProfile(INITIAL_PROFILE);
+    setPrefs(INITIAL_PREFS);
   };
 
   if (!fontsLoaded) {
@@ -71,7 +87,31 @@ export default function App() {
     .toUpperCase();
 
   let content;
-  if (selectedOffer) {
+  if (overlay === "edit") {
+    content = (
+      <EditProfileScreen
+        name={user.name}
+        role={user.role}
+        profile={profile}
+        onBack={() => setOverlay(null)}
+        onSave={(name, next) => {
+          setUser({ ...user, name });
+          setProfile(next);
+          setOverlay(null);
+        }}
+      />
+    );
+  } else if (overlay === "settings") {
+    content = (
+      <SettingsScreen
+        email={user.email}
+        prefs={prefs}
+        onPrefsChange={setPrefs}
+        onLogout={logout}
+        onBack={() => setOverlay(null)}
+      />
+    );
+  } else if (selectedOffer) {
     content = (
       <OfertaScreen
         offer={selectedOffer}
@@ -94,8 +134,10 @@ export default function App() {
     content = (
       <PerfilScreen
         user={user}
+        profile={profile}
         appliedCount={appliedIds.length}
-        onLogout={logout}
+        onEdit={() => setOverlay("edit")}
+        onSettings={() => setOverlay("settings")}
       />
     );
   }
@@ -105,7 +147,7 @@ export default function App() {
       <StatusBar style="dark" />
       <View style={styles.root}>
         <SafeAreaView style={styles.content} edges={["top"]}>
-          {!selectedOffer && tab !== "perfil" && (
+          {!selectedOffer && !overlay && tab !== "perfil" && (
             <TopBar
               initials={initials}
               onAvatar={() => changeTab("perfil")}
