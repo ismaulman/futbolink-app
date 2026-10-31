@@ -42,7 +42,10 @@ export default function PerfilScreen({ user, profile, appliedCount, onEdit, onSe
     .slice(0, 2)
     .join("")
     .toUpperCase();
-  const roleLabel = t(`role.${user.role}.label`);
+  // Staff y agencia muestran su puesto (si es "Otro", el texto que escribió).
+  const roleLabel = user.puesto
+    ? t(`puesto.${user.puesto}`, { defaultValue: user.puesto })
+    : t(`role.${user.role}.label`);
   const isPlayer = user.role === "player";
 
   return (
@@ -132,9 +135,7 @@ export default function PerfilScreen({ user, profile, appliedCount, onEdit, onSe
               what:
                 user.role === "agency"
                   ? t("profile.whatAgency")
-                  : user.role === "club"
-                    ? t("profile.whatClub")
-                    : t("profile.whatWork"),
+                  : t("profile.whatWork"),
             })}
           </Text>
         </View>

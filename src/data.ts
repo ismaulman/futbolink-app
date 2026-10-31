@@ -1,16 +1,34 @@
 // Datos de ejemplo. Más adelante esto se reemplaza por la API real.
 
-// Mismos tipos de cuenta que la plataforma: Futbolista, Staff, Agencia,
-// Reclutador y Club (los últimos tres son "ofertantes").
-export type Role = "player" | "staff" | "agency" | "recruiter" | "club";
+// Mismos tipos de registro que la web: Futbolista, Cuerpo técnico (staff, que
+// después se divide en puestos) y Agente / Representante (agencia).
+export type Role = "player" | "staff" | "agency";
 
 // Los textos de cada rol están en src/i18n/locales (role.<key>.label / .desc).
-export const ROLE_KEYS: Role[] = ["player", "staff", "agency", "recruiter", "club"];
+export const ROLE_KEYS: Role[] = ["player", "staff", "agency"];
+
+// Puestos del registro (mismos que la web). Los textos: puesto.<id>.
+export const STAFF_PUESTOS = [
+  "coach",
+  "technicalDirector",
+  "sportingDirector",
+  "scout",
+  "goalkeeperCoach",
+  "fitnessCoach",
+  "analyst",
+  "physiotherapist",
+  "nutritionist",
+  "psychologist",
+  "talentScout",
+];
+export const AGENCY_PUESTOS = ["fifaAgent", "representative"];
 
 export type User = {
   name: string;
   email: string;
   role: Role;
+  // id de STAFF_PUESTOS / AGENCY_PUESTOS, o el texto libre si eligió "Otro".
+  puesto?: string;
 };
 
 export type OfferType = "player" | "staff";
