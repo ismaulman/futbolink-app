@@ -44,7 +44,7 @@ import MatchScreen from "./src/screens/MatchScreen";
 import PortfolioScreen from "./src/screens/PortfolioScreen";
 import PanelScreen from "./src/screens/PanelScreen";
 import PublishOfferScreen from "./src/screens/PublishOfferScreen";
-import MercadoScreen from "./src/screens/MercadoScreen";
+import ExploreScreen from "./src/screens/ExploreScreen";
 import OfertaScreen from "./src/screens/OfertaScreen";
 import PlayerProfileScreen from "./src/screens/PlayerProfileScreen";
 import PerfilScreen from "./src/screens/PerfilScreen";
@@ -382,7 +382,7 @@ export default function App() {
     );
   } else if (tab === "mercado") {
     content = (
-      <MercadoScreen
+      <ExploreScreen
         appliedIds={appliedIds}
         savedIds={savedIds}
         onOpenOffer={setSelectedOffer}
