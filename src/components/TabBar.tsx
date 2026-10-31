@@ -6,28 +6,30 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COLORS } from "../theme";
 import { useTranslation } from "react-i18next";
 
-export type TabKey = "mercado" | "buscar" | "perfil";
+export type TabKey = "mercado" | "buscar" | "panel" | "perfil";
 
 type IconName = ComponentProps<typeof Ionicons>["name"];
 
 const TABS: { key: TabKey; label: string; icon: IconName; iconActive: IconName }[] = [
   { key: "mercado", label: "tabs.market", icon: "briefcase-outline", iconActive: "briefcase" },
   { key: "buscar", label: "tabs.search", icon: "search-outline", iconActive: "search" },
+  { key: "panel", label: "tabs.panel", icon: "stats-chart-outline", iconActive: "stats-chart" },
   { key: "perfil", label: "tabs.profile", icon: "person-outline", iconActive: "person" },
 ];
 
 type Props = {
   active: TabKey;
   onChange: (tab: TabKey) => void;
+  showPanel: boolean;
 };
 
-export default function TabBar({ active, onChange }: Props) {
+export default function TabBar({ active, onChange, showPanel }: Props) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
     <View style={[styles.bar, { paddingBottom: Math.max(insets.bottom, 8) }]}>
-      {TABS.map((tab) => {
+      {TABS.filter((tab) => showPanel || tab.key !== "panel").map((tab) => {
         const isActive = tab.key === active;
         return (
           <Pressable

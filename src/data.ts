@@ -482,3 +482,92 @@ export const MOCK_THREADS: Thread[] = [
     ],
   },
 ];
+
+// ---------- Herramientas de ofertante
+// Roles de Staff del catálogo de la plataforma (job-offer.catalog.ts).
+export const STAFF_ROLES = [
+  "Entrenador",
+  "Entrenador de Porteros",
+  "Preparador Físico",
+  "Director Deportivo",
+  "Ojeador Scout",
+  "Analista",
+  "Fisioterapeuta",
+  "Médico",
+  "Nutricionista",
+  "Psicólogo",
+  "Coordinador",
+  "Jefe de Reclutamiento",
+  "Utillero",
+  "Árbitro",
+  "Representante",
+  "Periodista",
+  "Marketing Digital",
+  "Administrativo",
+];
+
+export const SPORT_GENRES = ["Masculino", "Femenino", "Ambos", "Indistinto"];
+export const CATEGORIES = ["Amateur", "Semiprofesional", "Profesional"];
+export const EXTRAS = [
+  "Alojamiento",
+  "Vuelos",
+  "Transporte",
+  "Auto",
+  "Gimnasio",
+  "Viáticos",
+  "Comida",
+  "Premios por rendimiento",
+];
+export const CURRENCIES = ["€", "US$", "£"];
+
+// ACTIVE: visible en el Mercado. PENDING: en revisión antes de publicarse.
+export type MyOfferStatus = "ACTIVE" | "PENDING" | "CLOSED";
+
+export type Candidate = {
+  playerId: string;
+  hoursAgo: number;
+  viewed: boolean;
+  interested: boolean; // "Me interesa"
+  shortlisted: boolean; // candidato preseleccionado dentro de esta oferta
+};
+
+export type MyOffer = {
+  id: string;
+  type: OfferType;
+  title: string;
+  status: MyOfferStatus;
+  postedHoursAgo: number;
+  candidates: Candidate[];
+};
+
+export const INITIAL_MY_OFFERS: MyOffer[] = [
+  {
+    id: "mo1",
+    type: "player",
+    title: "Delantero Centro – Eccellenza",
+    status: "ACTIVE",
+    postedHoursAgo: 96,
+    candidates: [
+      { playerId: "p1", hoursAgo: 5, viewed: false, interested: false, shortlisted: false },
+      { playerId: "p5", hoursAgo: 20, viewed: false, interested: false, shortlisted: false },
+      { playerId: "p2", hoursAgo: 40, viewed: true, interested: true, shortlisted: false },
+    ],
+  },
+  {
+    id: "mo2",
+    type: "player",
+    title: "Portero – Promozione",
+    status: "ACTIVE",
+    postedHoursAgo: 170,
+    candidates: [
+      { playerId: "p4", hoursAgo: 60, viewed: true, interested: false, shortlisted: true },
+    ],
+  },
+];
+
+export type Folder = { id: string; name: string; playerIds: string[] };
+
+export const INITIAL_FOLDERS: Folder[] = [
+  { id: "f1", name: "Delanteros", playerIds: ["p1"] },
+  { id: "f2", name: "Para ver en vivo", playerIds: [] },
+];

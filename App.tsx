@@ -14,9 +14,13 @@ import TabBar, { TabKey } from "./src/components/TabBar";
 import TopBar from "./src/components/TopBar";
 import {
   ChatMessage,
+  Folder,
+  INITIAL_FOLDERS,
+  INITIAL_MY_OFFERS,
   INITIAL_PREFS,
   INITIAL_PROFILE,
   MOCK_THREADS,
+  MyOffer,
   NotificationPrefs,
   Offer,
   Player,
@@ -24,11 +28,16 @@ import {
   Thread,
   User,
 } from "./src/data";
+import { tc } from "./src/i18n";
 import AuthScreen from "./src/screens/AuthScreen";
 import EditProfileScreen from "./src/screens/EditProfileScreen";
 import MessagesScreen from "./src/screens/MessagesScreen";
 import ThreadScreen from "./src/screens/ThreadScreen";
 import BuscarScreen from "./src/screens/BuscarScreen";
+import CandidatesScreen from "./src/screens/CandidatesScreen";
+import FoldersScreen from "./src/screens/FoldersScreen";
+import PanelScreen from "./src/screens/PanelScreen";
+import PublishOfferScreen from "./src/screens/PublishOfferScreen";
 import MercadoScreen from "./src/screens/MercadoScreen";
 import OfertaScreen from "./src/screens/OfertaScreen";
 import PlayerProfileScreen from "./src/screens/PlayerProfileScreen";
@@ -50,7 +59,12 @@ export default function App() {
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [savedPlayerIds, setSavedPlayerIds] = useState<string[]>([]);
   const [proposalIds, setProposalIds] = useState<string[]>([]);
-  const [overlay, setOverlay] = useState<"edit" | "settings" | "messages" | null>(null);
+  const [overlay, setOverlay] = useState<
+    "edit" | "settings" | "messages" | "publish" | "candidates" | "folders" | null
+  >(null);
+  const [myOffers, setMyOffers] = useState<MyOffer[]>(INITIAL_MY_OFFERS);
+  const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+  const [folders, setFolders] = useState<Folder[]>(INITIAL_FOLDERS);
   const [threads, setThreads] = useState<Thread[]>(MOCK_THREADS);
   const [openThreadId, setOpenThreadId] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile>(INITIAL_PROFILE);
@@ -107,7 +121,66 @@ export default function App() {
     setOpenThreadId(thread.id);
   };
 
+  const toggleCandidate = (playerId: string, field: "interested" | "shortlisted") => {
+    setMyOffers((current) =>
+      current.map((offer) =>
+        offer.id === activeOfferId
+          ? {
+              ...offer,
+              candidates: offer.candidates.map((c) =>
+                c.playerId === playerId ? { ...c, viewed: true, [field]: !c[field] } : c,
+              ),
+            }
+          : offer,
+      ),
+    );
+  };
+
+  const openCandidate = (player: Player) => {
+    setMyOffers((current) =>
+      current.map((offer) =>
+        offer.id === activeOfferId
+          ? {
+              ...offer,
+              candidates: offer.candidates.map((c) =>
+                c.playerId === player.id ? { ...c, viewed: true } : c,
+              ),
+            }
+          : offer,
+      ),
+    );
+    setSelectedPlayer(player);
+  };
+
+  const createFolder = (name: string) => {
+    setFolders((current) => [...current, { id: `f${Date.now()}`, name, playerIds: [] }]);
+  };
+
+  const removeFromFolder = (folderId: string, playerId: string) => {
+    setFolders((current) =>
+      current.map((f) =>
+        f.id === folderId ? { ...f, playerIds: f.playerIds.filter((id) => id !== playerId) } : f,
+      ),
+    );
+  };
+
+  const toggleInFolder = (folderId: string, playerId: string) => {
+    setFolders((current) =>
+      current.map((f) =>
+        f.id === folderId
+          ? {
+              ...f,
+              playerIds: f.playerIds.includes(playerId)
+                ? f.playerIds.filter((id) => id !== playerId)
+                : [...f.playerIds, playerId],
+            }
+          : f,
+      ),
+    );
+  };
+
   const changeTab = (next: TabKey) => {
+    setActiveOfferId(null);
     setOpenThreadId(null);
     setSelectedOffer(null);
     setSelectedPlayer(null);
@@ -122,6 +195,9 @@ export default function App() {
     setAppliedIds([]);
     setThreads(MOCK_THREADS);
     setOpenThreadId(null);
+    setMyOffers(INITIAL_MY_OFFERS);
+    setFolders(INITIAL_FOLDERS);
+    setActiveOfferId(null);
     setSavedIds([]);
     setSavedPlayerIds([]);
     setProposalIds([]);
@@ -156,7 +232,23 @@ export default function App() {
   const openThreadData = threads.find((th) => th.id === openThreadId) ?? null;
 
   let content;
-  if (overlay === "messages" && openThreadData) {
+  if (selectedPlayer) {
+    content = (
+      <PlayerProfileScreen
+        player={selectedPlayer}
+        viewerRole={user.role}
+        saved={savedPlayerIds.includes(selectedPlayer.id)}
+        proposalSent={proposalIds.includes(selectedPlayer.id)}
+        onToggleSave={() => toggleSavePlayer(selectedPlayer.id)}
+        onSendProposal={() =>
+          setProposalIds((c) => (c.includes(selectedPlayer.id) ? c : [...c, selectedPlayer.id]))
+        }
+        folders={folders}
+        onToggleFolder={(folderId) => toggleInFolder(folderId, selectedPlayer.id)}
+        onBack={() => setSelectedPlayer(null)}
+      />
+    );
+  } else if (overlay === "messages" && openThreadData) {
     content = (
       <ThreadScreen
         thread={openThreadData}
@@ -179,6 +271,47 @@ export default function App() {
       <MessagesScreen
         threads={threads}
         onOpen={openThread}
+        onBack={() => setOverlay(null)}
+      />
+    );
+  } else if (overlay === "publish") {
+    content = (
+      <PublishOfferScreen
+        onBack={() => setOverlay(null)}
+        onPublish={(draft) => {
+          const fallback = `${tc(draft.position)} – ${tc(draft.category)}`;
+          setMyOffers((current) => [
+            {
+              id: `mo${Date.now()}`,
+              type: draft.type,
+              title: draft.title.trim() || fallback,
+              status: "PENDING",
+              postedHoursAgo: 0,
+              candidates: [],
+            },
+            ...current,
+          ]);
+          setOverlay(null);
+          setTab("panel");
+        }}
+      />
+    );
+  } else if (overlay === "candidates" && myOffers.some((o) => o.id === activeOfferId)) {
+    content = (
+      <CandidatesScreen
+        offer={myOffers.find((o) => o.id === activeOfferId) as MyOffer}
+        onOpenPlayer={openCandidate}
+        onToggle={toggleCandidate}
+        onBack={() => setOverlay(null)}
+      />
+    );
+  } else if (overlay === "folders") {
+    content = (
+      <FoldersScreen
+        folders={folders}
+        onCreate={createFolder}
+        onRemovePlayer={removeFromFolder}
+        onOpenPlayer={setSelectedPlayer}
         onBack={() => setOverlay(null)}
       />
     );
@@ -206,20 +339,6 @@ export default function App() {
         onBack={() => setOverlay(null)}
       />
     );
-  } else if (selectedPlayer) {
-    content = (
-      <PlayerProfileScreen
-        player={selectedPlayer}
-        viewerRole={user.role}
-        saved={savedPlayerIds.includes(selectedPlayer.id)}
-        proposalSent={proposalIds.includes(selectedPlayer.id)}
-        onToggleSave={() => toggleSavePlayer(selectedPlayer.id)}
-        onSendProposal={() =>
-          setProposalIds((c) => (c.includes(selectedPlayer.id) ? c : [...c, selectedPlayer.id]))
-        }
-        onBack={() => setSelectedPlayer(null)}
-      />
-    );
   } else if (selectedOffer) {
     content = (
       <OfertaScreen
@@ -237,6 +356,19 @@ export default function App() {
         onOpenOffer={setSelectedOffer}
         onApply={apply}
         onToggleSave={toggleSave}
+      />
+    );
+  } else if (tab === "panel" && user.role !== "player") {
+    content = (
+      <PanelScreen
+        offers={myOffers}
+        folders={folders}
+        onPublish={() => setOverlay("publish")}
+        onOpenOffer={(offer) => {
+          setActiveOfferId(offer.id);
+          setOverlay("candidates");
+        }}
+        onOpenFolders={() => setOverlay("folders")}
       />
     );
   } else if (tab === "buscar") {
@@ -279,7 +411,7 @@ export default function App() {
           )}
           {content}
         </SafeAreaView>
-        <TabBar active={tab} onChange={changeTab} />
+        <TabBar active={tab} onChange={changeTab} showPanel={user.role !== "player"} />
       </View>
     </SafeAreaProvider>
   );

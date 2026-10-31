@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import Text from "../components/AppText";
 import PositionPitch from "../components/PositionPitch";
 import ScreenHeader from "../components/ScreenHeader";
-import { Player, Role } from "../data";
+import { Folder, Player, Role } from "../data";
 import { tc } from "../i18n";
 import { COLORS, RADIUS } from "../theme";
 
@@ -15,6 +15,8 @@ type Props = {
   proposalSent: boolean;
   onToggleSave: () => void;
   onSendProposal: () => void;
+  folders: Folder[];
+  onToggleFolder: (folderId: string) => void;
   onBack: () => void;
 };
 
@@ -43,6 +45,8 @@ export default function PlayerProfileScreen({
   proposalSent,
   onToggleSave,
   onSendProposal,
+  folders,
+  onToggleFolder,
   onBack,
 }: Props) {
   const { t } = useTranslation();
@@ -145,6 +149,37 @@ export default function PlayerProfileScreen({
             </View>
           ))}
         </View>
+
+        {canPropose && (
+          <>
+            <Text style={styles.section}>{t("folders.inProfile")}</Text>
+            {folders.length === 0 ? (
+              <Text style={styles.positionLabel}>{t("folders.noneYet")}</Text>
+            ) : (
+              <View style={styles.folderChips}>
+                {folders.map((folder) => {
+                  const active = folder.playerIds.includes(player.id);
+                  return (
+                    <Pressable
+                      key={folder.id}
+                      onPress={() => onToggleFolder(folder.id)}
+                      style={[styles.folderChip, active && styles.folderChipActive]}
+                    >
+                      <Ionicons
+                        name={active ? "folder" : "folder-outline"}
+                        size={15}
+                        color={active ? COLORS.primaryDark : COLORS.muted}
+                      />
+                      <Text style={[styles.folderText, active && styles.folderTextActive]}>
+                        {folder.name}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            )}
+          </>
+        )}
       </ScrollView>
 
       {canPropose && (
@@ -234,6 +269,21 @@ const styles = StyleSheet.create({
   careerBody: { flex: 1 },
   careerClub: { fontSize: 15, fontWeight: "500", color: COLORS.ink },
   careerDetail: { fontSize: 13, color: COLORS.muted, marginTop: 2 },
+  folderChips: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  folderChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: RADIUS.pill,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.white,
+  },
+  folderChipActive: { backgroundColor: COLORS.primarySoft, borderColor: COLORS.primaryBorder },
+  folderText: { fontSize: 13, color: COLORS.muted },
+  folderTextActive: { color: COLORS.primaryDark },
   footer: {
     padding: 16,
     borderTopWidth: 1,
