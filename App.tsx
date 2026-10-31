@@ -38,6 +38,7 @@ export default function App() {
   const [tab, setTab] = useState<TabKey>("mercado");
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [appliedIds, setAppliedIds] = useState<string[]>([]);
+  const [savedIds, setSavedIds] = useState<string[]>([]);
   const [overlay, setOverlay] = useState<"edit" | "settings" | null>(null);
   const [profile, setProfile] = useState<Profile>(INITIAL_PROFILE);
   const [prefs, setPrefs] = useState<NotificationPrefs>(INITIAL_PREFS);
@@ -45,6 +46,14 @@ export default function App() {
   const apply = (offerId: string) => {
     setAppliedIds((current) =>
       current.includes(offerId) ? current : [...current, offerId],
+    );
+  };
+
+  const toggleSave = (offerId: string) => {
+    setSavedIds((current) =>
+      current.includes(offerId)
+        ? current.filter((id) => id !== offerId)
+        : [...current, offerId],
     );
   };
 
@@ -59,6 +68,7 @@ export default function App() {
     setTab("mercado");
     setSelectedOffer(null);
     setAppliedIds([]);
+    setSavedIds([]);
     setOverlay(null);
     setProfile(INITIAL_PROFILE);
     setPrefs(INITIAL_PREFS);
@@ -124,8 +134,10 @@ export default function App() {
     content = (
       <MercadoScreen
         appliedIds={appliedIds}
+        savedIds={savedIds}
         onOpenOffer={setSelectedOffer}
         onApply={apply}
+        onToggleSave={toggleSave}
       />
     );
   } else if (tab === "buscar") {

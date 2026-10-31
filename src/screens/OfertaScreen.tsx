@@ -47,7 +47,7 @@ export default function OfertaScreen({ offer, applied, onBack, onApply }: Props)
         showsVerticalScrollIndicator={false}
       >
         <Text style={styles.location}>
-          {offer.flag} {offer.country} · {offer.region}
+          {offer.flag} {tc(offer.country)} · {offer.region}
         </Text>
         <Text style={styles.title}>{offer.title}</Text>
         <Text style={styles.club}>

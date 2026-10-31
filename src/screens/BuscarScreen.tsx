@@ -37,7 +37,7 @@ function PlayerCard({ player }: { player: Player }) {
           {t("player.age", { count: player.age })} · {player.height} · {tc(player.category)}
         </Text>
         <Text style={styles.meta}>
-          {player.flag} {player.country} · {player.club}
+          {player.flag} {tc(player.country)} · {player.club}
         </Text>
       </View>
     </View>

@@ -12,20 +12,35 @@ type Props = {
   applied: boolean;
   onOpen: () => void;
   onApply: () => void;
+  saved: boolean;
+  onToggleSave: () => void;
 };
 
 // Tarjeta plana tipo LinkedIn: toda la tarjeta abre la oferta y la acción
 // secundaria es un link de texto (el botón verde lleno queda para el detalle).
-export default function OfferCard({ offer, applied, onOpen, onApply }: Props) {
+export default function OfferCard({ offer, applied, onOpen, onApply, saved, onToggleSave }: Props) {
   const { t } = useTranslation();
   return (
     <Pressable
       onPress={onOpen}
       style={({ pressed }) => [styles.card, pressed && styles.pressed]}
     >
-      <Text style={styles.location}>
-        {offer.flag} {offer.country} · {offer.region}
-      </Text>
+      <View style={styles.topRow}>
+        <Text style={styles.location}>
+          {offer.flag} {tc(offer.country)} · {offer.region}
+        </Text>
+        <Pressable
+          onPress={onToggleSave}
+          hitSlop={10}
+          accessibilityLabel={saved ? t("offer.unsave") : t("offer.save")}
+        >
+          <Ionicons
+            name={saved ? "bookmark" : "bookmark-outline"}
+            size={20}
+            color={saved ? COLORS.primary : COLORS.muted}
+          />
+        </Pressable>
+      </View>
       <Text style={styles.title}>{offer.title}</Text>
       <Text style={styles.club}>
         {offer.club} · {offer.league}
@@ -60,7 +75,13 @@ const styles = StyleSheet.create({
     padding: 14,
   },
   pressed: { backgroundColor: COLORS.surface },
-  location: { fontSize: 12, color: COLORS.muted },
+  topRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+  },
+  location: { flex: 1, fontSize: 12, color: COLORS.muted },
   title: { fontSize: 16, fontWeight: "500", color: COLORS.ink, marginTop: 4 },
   club: { fontSize: 14, color: COLORS.muted, marginTop: 2 },
   salary: { fontSize: 14, fontWeight: "500", color: COLORS.ink, marginTop: 8 },
