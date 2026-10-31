@@ -589,3 +589,18 @@ export const INITIAL_FOLDERS: Folder[] = [
   { id: "f1", name: "Delanteros", playerIds: ["p1"] },
   { id: "f2", name: "Para ver en vivo", playerIds: [] },
 ];
+
+// Portafolio de la agencia: jugadores que representa (o que ya les pidió representación).
+export type PortfolioEntry = { playerId: string; status: "active" | "pending" };
+
+export const INITIAL_PORTFOLIO: PortfolioEntry[] = [
+  { playerId: "p1", status: "active" },
+  { playerId: "p2", status: "active" },
+  { playerId: "p3", status: "pending" },
+];
+
+// Créditos de postulación por mes (cada postulación en nombre de un jugador gasta 1).
+export const MONTHLY_CREDITS = 10;
+
+// Postulación hecha por la agencia en nombre de un jugador.
+export type AgencyApplication = { playerId: string; offerId: string };

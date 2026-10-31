@@ -12,6 +12,9 @@ type Props = {
   onPublish: () => void;
   onOpenOffer: (offer: MyOffer) => void;
   onOpenFolders: () => void;
+  // Solo agencias: acceso al portafolio de jugadores representados.
+  portfolioCount?: number;
+  onOpenPortfolio?: () => void;
 };
 
 function Stat({ value, label }: { value: number; label: string }) {
@@ -23,7 +26,15 @@ function Stat({ value, label }: { value: number; label: string }) {
   );
 }
 
-export default function PanelScreen({ offers, folders, onPublish, onOpenOffer, onOpenFolders }: Props) {
+export default function PanelScreen({
+  offers,
+  folders,
+  onPublish,
+  onOpenOffer,
+  onOpenFolders,
+  portfolioCount,
+  onOpenPortfolio,
+}: Props) {
   const { t } = useTranslation();
   const allCandidates = offers.flatMap((o) => o.candidates);
 
@@ -77,6 +88,20 @@ export default function PanelScreen({ offers, folders, onPublish, onOpenOffer, o
             );
           })}
         </View>
+      )}
+
+      {onOpenPortfolio && (
+        <Pressable
+          onPress={onOpenPortfolio}
+          style={({ pressed }) => [styles.folderRow, pressed && styles.rowPressed]}
+        >
+          <Ionicons name="people-outline" size={22} color={COLORS.ink} />
+          <View style={styles.rowBody}>
+            <Text style={styles.rowTitle}>{t("portfolio.title")}</Text>
+            <Text style={styles.rowMeta}>{t("portfolio.count", { count: portfolioCount ?? 0 })}</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={COLORS.subtle} />
+        </Pressable>
       )}
 
       <Pressable

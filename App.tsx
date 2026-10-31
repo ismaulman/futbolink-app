@@ -14,8 +14,12 @@ import TabBar, { TabKey } from "./src/components/TabBar";
 import TopBar from "./src/components/TopBar";
 import {
   ChatMessage,
+  AgencyApplication,
   Folder,
   INITIAL_FOLDERS,
+  INITIAL_PORTFOLIO,
+  MONTHLY_CREDITS,
+  PortfolioEntry,
   INITIAL_MY_OFFERS,
   INITIAL_PREFS,
   INITIAL_PROFILE,
@@ -36,6 +40,7 @@ import ThreadScreen from "./src/screens/ThreadScreen";
 import BuscarScreen from "./src/screens/BuscarScreen";
 import CandidatesScreen from "./src/screens/CandidatesScreen";
 import FoldersScreen from "./src/screens/FoldersScreen";
+import PortfolioScreen from "./src/screens/PortfolioScreen";
 import PanelScreen from "./src/screens/PanelScreen";
 import PublishOfferScreen from "./src/screens/PublishOfferScreen";
 import MercadoScreen from "./src/screens/MercadoScreen";
@@ -60,10 +65,12 @@ export default function App() {
   const [savedPlayerIds, setSavedPlayerIds] = useState<string[]>([]);
   const [proposalIds, setProposalIds] = useState<string[]>([]);
   const [overlay, setOverlay] = useState<
-    "edit" | "settings" | "messages" | "publish" | "candidates" | "folders" | null
+    "edit" | "settings" | "messages" | "publish" | "candidates" | "folders" | "portfolio" | null
   >(null);
   const [myOffers, setMyOffers] = useState<MyOffer[]>(INITIAL_MY_OFFERS);
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+  const [portfolio, setPortfolio] = useState<PortfolioEntry[]>(INITIAL_PORTFOLIO);
+  const [agencyApps, setAgencyApps] = useState<AgencyApplication[]>([]);
   const [folders, setFolders] = useState<Folder[]>(INITIAL_FOLDERS);
   const [threads, setThreads] = useState<Thread[]>(MOCK_THREADS);
   const [openThreadId, setOpenThreadId] = useState<string | null>(null);
@@ -305,6 +312,28 @@ export default function App() {
         onBack={() => setOverlay(null)}
       />
     );
+  } else if (overlay === "portfolio" && user.role === "agency") {
+    content = (
+      <PortfolioScreen
+        portfolio={portfolio}
+        applications={agencyApps}
+        onRequest={(playerId) =>
+          setPortfolio((c) => (c.some((e) => e.playerId === playerId) ? c : [...c, { playerId, status: "pending" }]))
+        }
+        onRemove={(playerId) => {
+          setPortfolio((c) => c.filter((e) => e.playerId !== playerId));
+        }}
+        onApply={(playerId, offerId) =>
+          setAgencyApps((c) =>
+            c.length >= MONTHLY_CREDITS || c.some((a) => a.playerId === playerId && a.offerId === offerId)
+              ? c
+              : [...c, { playerId, offerId }],
+          )
+        }
+        onOpenPlayer={setSelectedPlayer}
+        onBack={() => setOverlay(null)}
+      />
+    );
   } else if (overlay === "folders") {
     content = (
       <FoldersScreen
@@ -369,6 +398,8 @@ export default function App() {
           setOverlay("candidates");
         }}
         onOpenFolders={() => setOverlay("folders")}
+        portfolioCount={user.role === "agency" ? portfolio.filter((e) => e.status === "active").length : undefined}
+        onOpenPortfolio={user.role === "agency" ? () => setOverlay("portfolio") : undefined}
       />
     );
   } else if (tab === "buscar") {
