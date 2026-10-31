@@ -15,6 +15,7 @@ type Props = {
   // Solo agencias: acceso al portafolio de jugadores representados.
   portfolioCount?: number;
   onOpenPortfolio?: () => void;
+  onOpenMatch: () => void;
 };
 
 function Stat({ value, label }: { value: number; label: string }) {
@@ -34,6 +35,7 @@ export default function PanelScreen({
   onOpenFolders,
   portfolioCount,
   onOpenPortfolio,
+  onOpenMatch,
 }: Props) {
   const { t } = useTranslation();
   const allCandidates = offers.flatMap((o) => o.candidates);
@@ -89,6 +91,18 @@ export default function PanelScreen({
           })}
         </View>
       )}
+
+      <Pressable
+        onPress={onOpenMatch}
+        style={({ pressed }) => [styles.folderRow, pressed && styles.rowPressed]}
+      >
+        <Ionicons name="sparkles-outline" size={22} color={COLORS.ink} />
+        <View style={styles.rowBody}>
+          <Text style={styles.rowTitle}>{t("match.open")}</Text>
+          <Text style={styles.rowMeta}>{t("match.openHint")}</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={18} color={COLORS.subtle} />
+      </Pressable>
 
       {onOpenPortfolio && (
         <Pressable
