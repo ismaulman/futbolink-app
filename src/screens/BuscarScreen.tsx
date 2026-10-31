@@ -2,8 +2,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { FlatList, Pressable, StyleSheet, TextInput, View } from "react-native";
 import Text from "../components/AppText";
+import { tc } from "../i18n";
 import { MOCK_PLAYERS, POSITIONS, Player } from "../data";
 import { COLORS, RADIUS, FONT } from "../theme";
+import { useTranslation } from "react-i18next";
 
 function initials(name: string) {
   return name
@@ -15,6 +17,7 @@ function initials(name: string) {
 }
 
 function PlayerCard({ player }: { player: Player }) {
+  const { t } = useTranslation();
   return (
     <View style={styles.card}>
       <View style={styles.avatar}>
@@ -29,9 +32,9 @@ function PlayerCard({ player }: { player: Player }) {
             <Ionicons name="checkmark-circle" size={16} color={COLORS.primaryDark} />
           )}
         </View>
-        <Text style={styles.position}>{player.position}</Text>
+        <Text style={styles.position}>{tc(player.position)}</Text>
         <Text style={styles.meta}>
-          {player.age} años · {player.height} · {player.category}
+          {t("player.age", { count: player.age })} · {player.height} · {tc(player.category)}
         </Text>
         <Text style={styles.meta}>
           {player.flag} {player.country} · {player.club}
@@ -42,6 +45,7 @@ function PlayerCard({ player }: { player: Player }) {
 }
 
 export default function BuscarScreen() {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [position, setPosition] = useState("Todas");
 
@@ -59,9 +63,9 @@ export default function BuscarScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
-        <Text style={styles.heading}>Buscar</Text>
+        <Text style={styles.heading}>{t("search.title")}</Text>
         <Text style={styles.subheading}>
-          {players.length} perfiles encontrados
+          {t("search.count", { count: players.length })}
         </Text>
 
         <View style={styles.searchBox}>
@@ -69,7 +73,7 @@ export default function BuscarScreen() {
           <TextInput
             value={query}
             onChangeText={setQuery}
-            placeholder="Nombre, club o país"
+            placeholder={t("search.placeholder")}
             placeholderTextColor={COLORS.subtle}
             style={styles.input}
           />
@@ -89,7 +93,7 @@ export default function BuscarScreen() {
                 style={[styles.chip, active && styles.chipActive]}
               >
                 <Text style={[styles.chipText, active && styles.chipTextActive]}>
-                  {item}
+                  {item === "Todas" ? t("common.all") : tc(item)}
                 </Text>
               </Pressable>
             );
@@ -104,7 +108,7 @@ export default function BuscarScreen() {
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
-          <Text style={styles.empty}>No se encontraron perfiles.</Text>
+          <Text style={styles.empty}>{t("search.empty")}</Text>
         }
       />
     </View>

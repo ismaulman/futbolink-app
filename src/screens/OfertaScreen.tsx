@@ -2,7 +2,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { Offer } from "../data";
+import { timeAgo } from "../i18n/format";
+import { tc } from "../i18n";
 import { COLORS, RADIUS } from "../theme";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   offer: Offer;
@@ -10,13 +13,6 @@ type Props = {
   onBack: () => void;
   onApply: () => void;
 };
-
-function ageRange(min: number | null, max: number | null) {
-  if (min && max) return `${min} a ${max} años`;
-  if (min) return `Desde ${min} años`;
-  if (max) return `Hasta ${max} años`;
-  return "Sin límite";
-}
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -28,13 +24,22 @@ function Row({ label, value }: { label: string; value: string }) {
 }
 
 export default function OfertaScreen({ offer, applied, onBack, onApply }: Props) {
+  const { t } = useTranslation();
+  const ageText =
+    offer.minAge && offer.maxAge
+      ? t("offer.ageRange", { min: offer.minAge, max: offer.maxAge })
+      : offer.minAge
+        ? t("offer.ageFrom", { min: offer.minAge })
+        : offer.maxAge
+          ? t("offer.ageTo", { max: offer.maxAge })
+          : t("offer.noLimit");
   return (
     <View style={styles.screen}>
       <View style={styles.topBar}>
         <Pressable onPress={onBack} style={styles.backButton}>
           <Ionicons name="arrow-back" size={22} color={COLORS.ink} />
         </Pressable>
-        <Text style={styles.topTitle}>Oferta</Text>
+        <Text style={styles.topTitle}>{t("offer.title")}</Text>
       </View>
 
       <ScrollView
@@ -52,20 +57,29 @@ export default function OfertaScreen({ offer, applied, onBack, onApply }: Props)
         <Text style={styles.salary}>{offer.salary}</Text>
 
         <View style={styles.list}>
-          <Row label={offer.type === "player" ? "Posiciones" : "Rol"} value={offer.positions.join(", ")} />
-          <Row label="Categoría" value={offer.category} />
-          <Row label="Contrato" value={offer.contractDuration} />
-          <Row label="Género" value={offer.sportGenres} />
-          <Row label="Experiencia mínima" value={offer.minExperience} />
-          <Row label="Edad" value={ageRange(offer.minAge, offer.maxAge)} />
-          <Row label="Pasaporte UE" value={offer.euPassport === "Si" ? "Requerido" : "No requerido"} />
-          <Row label="Disponibilidad para viajar" value={offer.availabilityToTravel === "Si" ? "Sí" : "No"} />
+          <Row
+            label={offer.type === "player" ? t("offer.positions") : t("offer.role")}
+            value={offer.positions.map(tc).join(", ")}
+          />
+          <Row label={t("offer.category")} value={tc(offer.category)} />
+          <Row label={t("offer.contract")} value={offer.contractDuration} />
+          <Row label={t("offer.gender")} value={tc(offer.sportGenres)} />
+          <Row label={t("offer.minExperience")} value={tc(offer.minExperience)} />
+          <Row label={t("offer.age")} value={ageText} />
+          <Row
+            label={t("offer.euPassport")}
+            value={offer.euPassport === "Si" ? t("offer.euRequired") : t("offer.euNotRequired")}
+          />
+          <Row
+            label={t("offer.travel")}
+            value={offer.availabilityToTravel === "Si" ? t("common.yes") : t("common.no")}
+          />
         </View>
 
-        <Text style={styles.sectionTitle}>Descripción</Text>
+        <Text style={styles.sectionTitle}>{t("offer.description")}</Text>
         <Text style={styles.body}>{offer.description}</Text>
 
-        <Text style={styles.sectionTitle}>Competencias</Text>
+        <Text style={styles.sectionTitle}>{t("offer.skills")}</Text>
         {offer.requirements.map((item) => (
           <View key={item} style={styles.bulletRow}>
             <Ionicons name="checkmark" size={16} color={COLORS.primaryDark} />
@@ -73,15 +87,15 @@ export default function OfertaScreen({ offer, applied, onBack, onApply }: Props)
           </View>
         ))}
 
-        <Text style={styles.sectionTitle}>Beneficios</Text>
+        <Text style={styles.sectionTitle}>{t("offer.benefits")}</Text>
         {offer.extras.map((item) => (
           <View key={item} style={styles.bulletRow}>
             <Ionicons name="add-circle-outline" size={16} color={COLORS.primaryDark} />
-            <Text style={styles.bulletText}>{item}</Text>
+            <Text style={styles.bulletText}>{tc(item)}</Text>
           </View>
         ))}
 
-        <Text style={styles.posted}>{offer.posted}</Text>
+        <Text style={styles.posted}>{timeAgo(t, offer.postedHoursAgo)}</Text>
       </ScrollView>
 
       <View style={styles.footer}>
@@ -95,7 +109,7 @@ export default function OfertaScreen({ offer, applied, onBack, onApply }: Props)
           ]}
         >
           <Text style={[styles.applyText, applied && styles.appliedText]}>
-            {applied ? "Postulación enviada ✓" : "Aplicar ahora"}
+            {applied ? t("offer.appliedFull") : t("offer.applyNow")}
           </Text>
         </Pressable>
       </View>

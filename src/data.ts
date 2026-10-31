@@ -4,13 +4,8 @@
 // Reclutador y Club (los últimos tres son "ofertantes").
 export type Role = "player" | "staff" | "agency" | "recruiter" | "club";
 
-export const ROLES: { key: Role; label: string; description: string }[] = [
-  { key: "player", label: "Futbolista", description: "Busco club u oportunidades" },
-  { key: "staff", label: "Staff", description: "Entrenador, preparador, analista…" },
-  { key: "agency", label: "Agencia", description: "Represento o busco talento" },
-  { key: "recruiter", label: "Reclutador", description: "Busco talento para clubes" },
-  { key: "club", label: "Club", description: "Publico oportunidades y busco fichajes" },
-];
+// Los textos de cada rol están en src/i18n/locales (role.<key>.label / .desc).
+export const ROLE_KEYS: Role[] = ["player", "staff", "agency", "recruiter", "club"];
 
 export type User = {
   name: string;
@@ -31,7 +26,7 @@ export type Offer = {
   league: string;
   title: string;
   salary: string; // incluye moneda, ej. "€800 / mes"
-  posted: string;
+  postedHoursAgo: number; // se muestra con t("time.hoursAgo/daysAgo")
   description: string;
   positions: string[]; // posiciones o roles buscados
   category: string; // Amateur / Semiprofesional / Profesional
@@ -57,7 +52,7 @@ export const MOCK_OFFERS: Offer[] = [
     league: "Eccellenza",
     title: "Delantero Centro – Eccellenza",
     salary: "€800 / mes",
-    posted: "Hace 2 horas",
+    postedHoursAgo: 2,
     description:
       "Club de Eccellenza busca delantero centro con buen juego de espaldas y definición. Temporada completa con posibilidad de renovación.",
     positions: ["Delantero Centro"],
@@ -82,7 +77,7 @@ export const MOCK_OFFERS: Offer[] = [
     league: "Promozione",
     title: "Portero – Promozione",
     salary: "€600 / mes",
-    posted: "Hace 5 horas",
+    postedHoursAgo: 5,
     description:
       "Buscamos portero con buen juego de pies y liderazgo para la defensa. Entrenamientos de martes a jueves.",
     positions: ["Portero"],
@@ -107,7 +102,7 @@ export const MOCK_OFFERS: Offer[] = [
     league: "NPL Victoria",
     title: "Entrenador – Primer equipo",
     salary: "AUD 3.500 / mes",
-    posted: "Ayer",
+    postedHoursAgo: 24,
     description:
       "El club busca entrenador para su primer equipo masculino con licencia vigente y experiencia en fútbol formativo y competitivo.",
     positions: ["Entrenador"],
@@ -132,7 +127,7 @@ export const MOCK_OFFERS: Offer[] = [
     league: "Liga 2",
     title: "Mediocampista Central – Liga 2",
     salary: "€1.200 / mes",
-    posted: "Hace 2 días",
+    postedHoursAgo: 48,
     description:
       "Mediocampista con visión de juego y buen pase para un equipo que busca el ascenso.",
     positions: ["Mediocampista Central", "Mediocampista Defensivo"],
@@ -157,7 +152,7 @@ export const MOCK_OFFERS: Offer[] = [
     league: "Prima Categoria",
     title: "Preparador Físico – Prima Categoria",
     salary: "€700 / mes",
-    posted: "Hace 3 días",
+    postedHoursAgo: 72,
     description:
       "Buscamos preparador físico para planificar la carga de entrenamiento y la prevención de lesiones del plantel.",
     positions: ["Preparador Físico"],
@@ -300,7 +295,7 @@ export const MY_PROFILE = {
   videoPlays: 342,
   height: "1,78 m",
   foot: "Derecho",
-  club: "Sin club (agente libre)",
+  club: "", // vacío = sin club (se muestra profile.noClub)
   career: [
     { year: "2024 – 2025", club: "Club Deportivo Norte", detail: "Liga regional" },
     { year: "2022 – 2024", club: "Atlético Juvenil", detail: "Categoría Reserva" },

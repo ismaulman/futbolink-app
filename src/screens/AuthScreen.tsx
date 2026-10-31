@@ -2,8 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import Text from "../components/AppText";
-import { ROLES, Role, User } from "../data";
+import { ROLE_KEYS, Role, User } from "../data";
 import { COLORS, RADIUS, FONT } from "../theme";
+import { useTranslation } from "react-i18next";
 
 type Mode = "login" | "register";
 
@@ -11,12 +12,13 @@ type Props = {
   onSubmit: (user: User) => void;
 };
 
-function nameFromEmail(email: string) {
-  const base = email.split("@")[0] || "Usuario";
+function nameFromEmail(email: string, fallback: string) {
+  const base = email.split("@")[0] || fallback;
   return base.charAt(0).toUpperCase() + base.slice(1);
 }
 
 export default function AuthScreen({ onSubmit }: Props) {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<Mode>("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -35,24 +37,24 @@ export default function AuthScreen({ onSubmit }: Props) {
   const submit = () => {
     const cleanEmail = email.trim();
     if (isRegister && name.trim().length < 2) {
-      setError("Escribí tu nombre completo.");
+      setError(t("auth.errName"));
       return;
     }
     if (!cleanEmail.includes("@") || !cleanEmail.includes(".")) {
-      setError("Ingresá un email válido.");
+      setError(t("auth.errEmail"));
       return;
     }
     if (password.length < (isRegister ? 8 : 1)) {
       setError(
         isRegister
-          ? "La contraseña debe tener al menos 8 caracteres."
-          : "Ingresá tu contraseña.",
+          ? t("auth.errPasswordRegister")
+          : t("auth.errPasswordLogin"),
       );
       return;
     }
     setError("");
     onSubmit({
-      name: isRegister ? name.trim() : nameFromEmail(cleanEmail),
+      name: isRegister ? name.trim() : nameFromEmail(cleanEmail, t("auth.defaultUser")),
       email: cleanEmail,
       role,
     });
@@ -69,7 +71,7 @@ export default function AuthScreen({ onSubmit }: Props) {
         showsVerticalScrollIndicator={false}
       >
         <Text style={styles.logo}>FutboLink</Text>
-        <Text style={styles.tagline}>Conectamos talento con oportunidades</Text>
+        <Text style={styles.tagline}>{t("app.tagline")}</Text>
 
         <View style={styles.card}>
           <View style={styles.segment}>
@@ -80,7 +82,7 @@ export default function AuthScreen({ onSubmit }: Props) {
               <Text
                 style={[styles.segmentText, !isRegister && styles.segmentTextActive]}
               >
-                Ingresar
+                {t("auth.login")}
               </Text>
             </Pressable>
             <Pressable
@@ -90,18 +92,18 @@ export default function AuthScreen({ onSubmit }: Props) {
               <Text
                 style={[styles.segmentText, isRegister && styles.segmentTextActive]}
               >
-                Crear cuenta
+                {t("auth.register")}
               </Text>
             </Pressable>
           </View>
 
           {isRegister && (
             <View style={styles.field}>
-              <Text style={styles.label}>Nombre completo</Text>
+              <Text style={styles.label}>{t("auth.fullName")}</Text>
               <TextInput
                 value={name}
                 onChangeText={setName}
-                placeholder="Tu nombre"
+                placeholder={t("auth.namePlaceholder")}
                 placeholderTextColor={COLORS.subtle}
                 style={styles.input}
               />
@@ -109,11 +111,11 @@ export default function AuthScreen({ onSubmit }: Props) {
           )}
 
           <View style={styles.field}>
-            <Text style={styles.label}>Email</Text>
+            <Text style={styles.label}>{t("auth.email")}</Text>
             <TextInput
               value={email}
               onChangeText={setEmail}
-              placeholder="tu@email.com"
+              placeholder={t("auth.emailPlaceholder")}
               placeholderTextColor={COLORS.subtle}
               autoCapitalize="none"
               autoCorrect={false}
@@ -123,12 +125,16 @@ export default function AuthScreen({ onSubmit }: Props) {
           </View>
 
           <View style={styles.field}>
-            <Text style={styles.label}>Contraseña</Text>
+            <Text style={styles.label}>{t("auth.password")}</Text>
             <View style={styles.passwordBox}>
               <TextInput
                 value={password}
                 onChangeText={setPassword}
-                placeholder={isRegister ? "Mínimo 8 caracteres" : "Tu contraseña"}
+                placeholder={
+                  isRegister
+                    ? t("auth.passwordPlaceholderRegister")
+                    : t("auth.passwordPlaceholderLogin")
+                }
                 placeholderTextColor={COLORS.subtle}
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
@@ -148,13 +154,13 @@ export default function AuthScreen({ onSubmit }: Props) {
 
           {isRegister && (
             <View style={styles.field}>
-              <Text style={styles.label}>¿Cómo vas a usar FutboLink?</Text>
-              {ROLES.map((item) => {
-                const active = item.key === role;
+              <Text style={styles.label}>{t("auth.howUse")}</Text>
+              {ROLE_KEYS.map((key) => {
+                const active = key === role;
                 return (
                   <Pressable
-                    key={item.key}
-                    onPress={() => setRole(item.key)}
+                    key={key}
+                    onPress={() => setRole(key)}
                     style={[styles.roleCard, active && styles.roleCardActive]}
                   >
                     <Ionicons
@@ -163,8 +169,8 @@ export default function AuthScreen({ onSubmit }: Props) {
                       color={active ? COLORS.primaryDark : COLORS.subtle}
                     />
                     <View style={styles.roleBody}>
-                      <Text style={styles.roleLabel}>{item.label}</Text>
-                      <Text style={styles.roleDescription}>{item.description}</Text>
+                      <Text style={styles.roleLabel}>{t(`role.${key}.label`)}</Text>
+                      <Text style={styles.roleDescription}>{t(`role.${key}.desc`)}</Text>
                     </View>
                   </Pressable>
                 );
@@ -179,19 +185,16 @@ export default function AuthScreen({ onSubmit }: Props) {
             style={({ pressed }) => [styles.submit, pressed && { opacity: 0.85 }]}
           >
             <Text style={styles.submitText}>
-              {isRegister ? "Crear cuenta" : "Ingresar"}
+              {isRegister ? t("auth.register") : t("auth.login")}
             </Text>
           </Pressable>
 
           {!isRegister && (
-            <Text style={styles.forgot}>¿Olvidaste tu contraseña?</Text>
+            <Text style={styles.forgot}>{t("auth.forgot")}</Text>
           )}
         </View>
 
-        <Text style={styles.note}>
-          Versión de prueba: por ahora cualquier email y contraseña válidos
-          entran, y los datos no se guardan.
-        </Text>
+        <Text style={styles.note}>{t("auth.testNote")}</Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );

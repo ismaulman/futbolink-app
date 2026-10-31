@@ -4,13 +4,14 @@ import Text from "../components/AppText";
 import OfferCard from "../components/OfferCard";
 import { MOCK_OFFERS, Offer } from "../data";
 import { COLORS, RADIUS } from "../theme";
+import { useTranslation } from "react-i18next";
 
 type Filter = "all" | "player" | "staff";
 
 const FILTERS: { key: Filter; label: string }[] = [
-  { key: "all", label: "Todas" },
-  { key: "player", label: "Jugadores" },
-  { key: "staff", label: "Staff" },
+  { key: "all", label: "common.all" },
+  { key: "player", label: "market.filterPlayers" },
+  { key: "staff", label: "market.filterStaff" },
 ];
 
 type Props = {
@@ -20,6 +21,7 @@ type Props = {
 };
 
 export default function MercadoScreen({ appliedIds, onOpenOffer, onApply }: Props) {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState<Filter>("all");
 
   const offers =
@@ -30,9 +32,9 @@ export default function MercadoScreen({ appliedIds, onOpenOffer, onApply }: Prop
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
-        <Text style={styles.heading}>Mercado</Text>
+        <Text style={styles.heading}>{t("market.title")}</Text>
         <Text style={styles.subheading}>
-          {offers.length} oportunidades encontradas
+          {t("market.count", { count: offers.length })}
         </Text>
 
         <View style={styles.filtersRow}>
@@ -45,7 +47,7 @@ export default function MercadoScreen({ appliedIds, onOpenOffer, onApply }: Prop
                 style={[styles.chip, active && styles.chipActive]}
               >
                 <Text style={[styles.chipText, active && styles.chipTextActive]}>
-                  {item.label}
+                  {t(item.label)}
                 </Text>
               </Pressable>
             );

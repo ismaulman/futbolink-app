@@ -4,15 +4,16 @@ import { Pressable, StyleSheet, View } from "react-native";
 import Text from "./AppText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COLORS } from "../theme";
+import { useTranslation } from "react-i18next";
 
 export type TabKey = "mercado" | "buscar" | "perfil";
 
 type IconName = ComponentProps<typeof Ionicons>["name"];
 
 const TABS: { key: TabKey; label: string; icon: IconName; iconActive: IconName }[] = [
-  { key: "mercado", label: "Mercado", icon: "briefcase-outline", iconActive: "briefcase" },
-  { key: "buscar", label: "Buscar", icon: "search-outline", iconActive: "search" },
-  { key: "perfil", label: "Perfil", icon: "person-outline", iconActive: "person" },
+  { key: "mercado", label: "tabs.market", icon: "briefcase-outline", iconActive: "briefcase" },
+  { key: "buscar", label: "tabs.search", icon: "search-outline", iconActive: "search" },
+  { key: "perfil", label: "tabs.profile", icon: "person-outline", iconActive: "person" },
 ];
 
 type Props = {
@@ -21,6 +22,7 @@ type Props = {
 };
 
 export default function TabBar({ active, onChange }: Props) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
@@ -39,7 +41,7 @@ export default function TabBar({ active, onChange }: Props) {
               color={isActive ? COLORS.primary : COLORS.subtle}
             />
             <Text style={[styles.label, isActive && styles.labelActive]}>
-              {tab.label}
+              {t(tab.label)}
             </Text>
           </Pressable>
         );

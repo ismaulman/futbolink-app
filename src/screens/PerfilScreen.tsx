@@ -1,8 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
-import { MY_PROFILE, ROLES, User } from "../data";
+import { MY_PROFILE, User } from "../data";
 import { COLORS, RADIUS } from "../theme";
+import { useTranslation } from "react-i18next";
+import i18n, { LANGUAGES, tc } from "../i18n";
 
 type Props = {
   user: User;
@@ -31,13 +33,14 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 // Perfil estilo Instagram/LinkedIn: avatar + números arriba, datos en listas
 // planas con divisores finos, sin cajas ni negritas pesadas.
 export default function PerfilScreen({ user, appliedCount, onLogout }: Props) {
+  const { t } = useTranslation();
   const initials = user.name
     .split(" ")
     .map((part) => part[0])
     .slice(0, 2)
     .join("")
     .toUpperCase();
-  const roleLabel = ROLES.find((item) => item.key === user.role)?.label ?? "";
+  const roleLabel = t(`role.${user.role}.label`);
   const isPlayer = user.role === "player";
 
   return (
@@ -47,7 +50,7 @@ export default function PerfilScreen({ user, appliedCount, onLogout }: Props) {
     >
       <View style={styles.topRow}>
         <Text style={styles.username}>{user.name}</Text>
-        <Pressable onPress={onLogout} hitSlop={10} accessibilityLabel="Cerrar sesión">
+        <Pressable onPress={onLogout} hitSlop={10} accessibilityLabel={t("profile.logout")}>
           <Ionicons name="log-out-outline" size={24} color={COLORS.ink} />
         </Pressable>
       </View>
@@ -57,9 +60,9 @@ export default function PerfilScreen({ user, appliedCount, onLogout }: Props) {
           <Text style={styles.avatarText}>{initials}</Text>
         </View>
         <View style={styles.statsRow}>
-          <Stat value={String(MY_PROFILE.views)} label="Vistas" />
-          <Stat value={String(MY_PROFILE.videoPlays)} label="Videos" />
-          <Stat value={String(appliedCount)} label="Postulaciones" />
+          <Stat value={String(MY_PROFILE.views)} label={t("profile.views")} />
+          <Stat value={String(MY_PROFILE.videoPlays)} label={t("profile.videos")} />
+          <Stat value={String(appliedCount)} label={t("profile.applications")} />
         </View>
       </View>
 
@@ -67,32 +70,32 @@ export default function PerfilScreen({ user, appliedCount, onLogout }: Props) {
         <Text style={styles.name}>{user.name}</Text>
         <Text style={styles.role}>
           {roleLabel}
-          {isPlayer ? ` · ${MY_PROFILE.position}` : ""}
+          {isPlayer ? ` · ${tc(MY_PROFILE.position)}` : ""}
         </Text>
         <Text style={styles.email}>{user.email}</Text>
       </View>
 
       <View style={styles.actions}>
         <Pressable style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
-          <Text style={styles.actionText}>Editar perfil</Text>
+          <Text style={styles.actionText}>{t("profile.edit")}</Text>
         </Pressable>
         <Pressable style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
           <Ionicons name="shield-checkmark-outline" size={15} color={COLORS.ink} />
-          <Text style={styles.actionText}>Verificar</Text>
+          <Text style={styles.actionText}>{t("profile.verify")}</Text>
         </Pressable>
       </View>
 
       {isPlayer ? (
         <>
-          <Text style={styles.sectionTitle}>Información</Text>
+          <Text style={styles.sectionTitle}>{t("profile.info")}</Text>
           <View style={styles.list}>
-            <InfoRow label="Posición" value={MY_PROFILE.position} />
-            <InfoRow label="Altura" value={MY_PROFILE.height} />
-            <InfoRow label="Pie hábil" value={MY_PROFILE.foot} />
-            <InfoRow label="Club actual" value={MY_PROFILE.club} />
+            <InfoRow label={t("profile.position")} value={tc(MY_PROFILE.position)} />
+            <InfoRow label={t("profile.height")} value={MY_PROFILE.height} />
+            <InfoRow label={t("profile.foot")} value={tc(MY_PROFILE.foot)} />
+            <InfoRow label={t("profile.currentClub")} value={MY_PROFILE.club || t("profile.noClub")} />
           </View>
 
-          <Text style={styles.sectionTitle}>Trayectoria</Text>
+          <Text style={styles.sectionTitle}>{t("profile.career")}</Text>
           <View style={styles.list}>
             {MY_PROFILE.career.map((item) => (
               <View key={item.year} style={styles.careerRow}>
@@ -109,13 +112,37 @@ export default function PerfilScreen({ user, appliedCount, onLogout }: Props) {
         </>
       ) : (
         <View style={styles.empty}>
-          <Text style={styles.emptyTitle}>Completá tu perfil</Text>
+          <Text style={styles.emptyTitle}>{t("profile.completeTitle")}</Text>
           <Text style={styles.emptyText}>
-            Acá vas a poder cargar tu experiencia y los datos de tu{" "}
-            {user.role === "agency" ? "agencia" : user.role === "club" ? "club" : "trabajo"}.
+            {t("profile.completeText", {
+              what:
+                user.role === "agency"
+                  ? t("profile.whatAgency")
+                  : user.role === "club"
+                    ? t("profile.whatClub")
+                    : t("profile.whatWork"),
+            })}
           </Text>
         </View>
       )}
+
+      <Text style={styles.sectionTitle}>{t("profile.language")}</Text>
+      <View style={styles.langRow}>
+        {LANGUAGES.map((lang) => {
+          const active = i18n.language === lang.code;
+          return (
+            <Pressable
+              key={lang.code}
+              onPress={() => i18n.changeLanguage(lang.code)}
+              style={[styles.langChip, active && styles.langChipActive]}
+            >
+              <Text style={[styles.langText, active && styles.langTextActive]}>
+                {lang.label}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
     </ScrollView>
   );
 }
@@ -212,6 +239,27 @@ const styles = StyleSheet.create({
   careerBody: { flex: 1 },
   careerClub: { fontSize: 15, fontWeight: "500", color: COLORS.ink },
   careerDetail: { fontSize: 13, color: COLORS.muted, marginTop: 2 },
+  langRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    paddingHorizontal: 16,
+    marginTop: 8,
+  },
+  langChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: RADIUS.pill,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.white,
+  },
+  langChipActive: {
+    backgroundColor: COLORS.primarySoft,
+    borderColor: COLORS.primaryBorder,
+  },
+  langText: { fontSize: 13, color: COLORS.muted },
+  langTextActive: { color: COLORS.primaryDark },
   empty: { paddingHorizontal: 16, marginTop: 32, alignItems: "center" },
   emptyTitle: { fontSize: 16, fontWeight: "500", color: COLORS.ink },
   emptyText: {

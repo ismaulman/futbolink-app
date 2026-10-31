@@ -2,7 +2,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, View } from "react-native";
 import Text from "./AppText";
 import { Offer } from "../data";
+import { timeAgo } from "../i18n/format";
+import { tc } from "../i18n";
 import { COLORS, RADIUS } from "../theme";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   offer: Offer;
@@ -14,6 +17,7 @@ type Props = {
 // Tarjeta plana tipo LinkedIn: toda la tarjeta abre la oferta y la acción
 // secundaria es un link de texto (el botón verde lleno queda para el detalle).
 export default function OfferCard({ offer, applied, onOpen, onApply }: Props) {
+  const { t } = useTranslation();
   return (
     <Pressable
       onPress={onOpen}
@@ -27,19 +31,19 @@ export default function OfferCard({ offer, applied, onOpen, onApply }: Props) {
         {offer.club} · {offer.league}
       </Text>
       <Text style={styles.salary}>
-        {offer.salary} · {offer.category}
+        {offer.salary} · {tc(offer.category)}
       </Text>
 
       <View style={styles.footer}>
-        <Text style={styles.posted}>{offer.posted}</Text>
+        <Text style={styles.posted}>{timeAgo(t, offer.postedHoursAgo)}</Text>
         <Pressable onPress={onApply} disabled={applied} hitSlop={10}>
           {applied ? (
             <View style={styles.appliedRow}>
               <Ionicons name="checkmark" size={14} color={COLORS.primaryDark} />
-              <Text style={styles.action}>Postulado</Text>
+              <Text style={styles.action}>{t("offer.applied")}</Text>
             </View>
           ) : (
-            <Text style={styles.action}>Postularme →</Text>
+            <Text style={styles.action}>{t("offer.apply")}</Text>
           )}
         </Pressable>
       </View>

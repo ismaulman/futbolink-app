@@ -8,6 +8,7 @@ import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import "./src/i18n";
 import TabBar, { TabKey } from "./src/components/TabBar";
 import TopBar from "./src/components/TopBar";
 import { Offer, User } from "./src/data";
