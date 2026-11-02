@@ -18,6 +18,8 @@ import {
   Folder,
   INITIAL_FOLDERS,
   EMPTY_ORG,
+  AppNotification,
+  INITIAL_NOTIFICATIONS,
   INITIAL_PAGES,
   INITIAL_PLANS,
   INITIAL_PORTFOLIO,
@@ -47,6 +49,8 @@ import BuscarScreen from "./src/screens/BuscarScreen";
 import CandidatesScreen from "./src/screens/CandidatesScreen";
 import FoldersScreen from "./src/screens/FoldersScreen";
 import MatchScreen from "./src/screens/MatchScreen";
+import HomeScreen from "./src/screens/HomeScreen";
+import NotificationsScreen from "./src/screens/NotificationsScreen";
 import OrgFormScreen from "./src/screens/OrgFormScreen";
 import OrgPageScreen from "./src/screens/OrgPageScreen";
 import OrgPagesScreen from "./src/screens/OrgPagesScreen";
@@ -69,7 +73,7 @@ export default function App() {
     Inter_600SemiBold,
   });
   const [user, setUser] = useState<User | null>(null);
-  const [tab, setTab] = useState<TabKey>("mercado");
+  const [tab, setTab] = useState<TabKey>("inicio");
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [appliedIds, setAppliedIds] = useState<string[]>([]);
   const [savedIds, setSavedIds] = useState<string[]>([]);
@@ -77,10 +81,11 @@ export default function App() {
   const [savedPlayerIds, setSavedPlayerIds] = useState<string[]>([]);
   const [proposalIds, setProposalIds] = useState<string[]>([]);
   const [overlay, setOverlay] = useState<
-    "edit" | "settings" | "messages" | "publish" | "candidates" | "folders" | "portfolio" | "match" | "plan" | "verification" | "pages" | "pageForm" | "pageDetail" | null
+    "edit" | "settings" | "messages" | "publish" | "candidates" | "folders" | "portfolio" | "match" | "plan" | "verification" | "pages" | "pageForm" | "pageDetail" | "notifications" | null
   >(null);
   const [myOffers, setMyOffers] = useState<MyOffer[]>(INITIAL_MY_OFFERS);
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+  const [notifications, setNotifications] = useState<AppNotification[]>(INITIAL_NOTIFICATIONS);
   const [pages, setPages] = useState<OrgPage[]>(INITIAL_PAGES);
   const [activePageId, setActivePageId] = useState<string | null>(null);
   const [editingPage, setEditingPage] = useState(false);
@@ -230,6 +235,8 @@ export default function App() {
     setProfile(INITIAL_PROFILE);
     setPlans(INITIAL_PLANS);
     setPages(INITIAL_PAGES);
+    setNotifications(INITIAL_NOTIFICATIONS);
+    setTab("inicio");
     setVerification("none");
     setPrefs(INITIAL_PREFS);
   };
@@ -259,6 +266,8 @@ export default function App() {
     );
   }
 
+  // Los avisos de quien publica ofertas (agencia) son distintos a los de quien busca.
+  const myAudience = user.role === "agency" ? "offerer" : "seeker";
   const initials = user.name
     .split(" ")
     .map((part) => part[0])
@@ -390,6 +399,16 @@ export default function App() {
         }}
       />
     );
+  } else if (overlay === "notifications") {
+    content = (
+      <NotificationsScreen
+        items={notifications.filter((n) => n.audience === myAudience)}
+        onMarkAllRead={() =>
+          setNotifications((c) => c.map((n) => (n.audience === myAudience ? { ...n, read: true } : n)))
+        }
+        onBack={() => setOverlay(null)}
+      />
+    );
   } else if (overlay === "pages") {
     content = (
       <OrgPagesScreen
@@ -477,6 +496,30 @@ export default function App() {
         onApply={() => apply(selectedOffer.id)}
       />
     );
+  } else if (tab === "inicio") {
+    content = (
+      <HomeScreen
+        user={user}
+        profile={profile}
+        plans={plans}
+        appliedIds={appliedIds}
+        myOffers={myOffers}
+        notifications={notifications}
+        verified={verification === "verified"}
+        representedCount={portfolio.filter((e) => e.status === "active").length}
+        creditsLeft={MONTHLY_CREDITS - agencyApps.length}
+        onOpenOffer={setSelectedOffer}
+        onSearchOffers={() => changeTab("mercado")}
+        onEditProfile={() => setOverlay("edit")}
+        onOpenPlan={() => setOverlay("plan")}
+        onOpenNotifications={() => setOverlay("notifications")}
+        onOpenMyOffer={(offer) => {
+          setActiveOfferId(offer.id);
+          setOverlay("candidates");
+        }}
+        onPublish={() => setOverlay("publish")}
+      />
+    );
   } else if (tab === "mercado") {
     content = (
       <ExploreScreen
@@ -542,6 +585,12 @@ export default function App() {
                 setOverlay("messages");
               }}
               unreadCount={threads.filter((th) => th.unread).length}
+              onNotifications={() => {
+                setSelectedOffer(null);
+                setSelectedPlayer(null);
+                setOverlay("notifications");
+              }}
+              notificationCount={notifications.filter((n) => n.audience === myAudience && !n.read).length}
             />
           )}
           {content}

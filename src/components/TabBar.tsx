@@ -6,11 +6,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COLORS } from "../theme";
 import { useTranslation } from "react-i18next";
 
-export type TabKey = "mercado" | "buscar" | "panel" | "perfil";
+export type TabKey = "inicio" | "mercado" | "buscar" | "panel" | "perfil";
 
 type IconName = ComponentProps<typeof Ionicons>["name"];
 
 const TABS: { key: TabKey; label: string; icon: IconName; iconActive: IconName }[] = [
+  { key: "inicio", label: "tabs.home", icon: "home-outline", iconActive: "home" },
   { key: "mercado", label: "tabs.market", icon: "briefcase-outline", iconActive: "briefcase" },
   { key: "buscar", label: "tabs.search", icon: "search-outline", iconActive: "search" },
   { key: "panel", label: "tabs.panel", icon: "stats-chart-outline", iconActive: "stats-chart" },

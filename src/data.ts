@@ -711,3 +711,36 @@ export const INITIAL_PAGES: OrgPage[] = [
     rejectionReason: "Ya existe una página oficial con este nombre.",
   },
 ];
+
+// Avisos (módulo Notifications de la plataforma). El texto sale de notif.<TYPE>.
+export type NotificationType =
+  | "PROFILE_VIEW"
+  | "APPLICATION_IN_REVIEW"
+  | "APPLICATION_PROFILE_VIEWED"
+  | "APPLICATION_INTEREST"
+  | "JOB_MATCH"
+  | "PROPOSAL_RECEIVED"
+  | "APPLICATION_RECEIVED"
+  | "TALENT_MATCH";
+
+export type AppNotification = {
+  id: string;
+  type: NotificationType;
+  hoursAgo: number;
+  read: boolean;
+  // Quién ve el aviso: quienes buscan oportunidades o quienes publican ofertas.
+  audience: "seeker" | "offerer";
+  who?: string; // nombre de persona u organización
+  offer?: string; // título de oferta
+};
+
+export const INITIAL_NOTIFICATIONS: AppNotification[] = [
+  { id: "n1", type: "PROFILE_VIEW", hoursAgo: 2, read: false, audience: "seeker", who: "ASD Bari Nord" },
+  { id: "n2", type: "APPLICATION_PROFILE_VIEWED", hoursAgo: 9, read: false, audience: "seeker", who: "FC Săgeata", offer: "Portero – Liga 2" },
+  { id: "n3", type: "JOB_MATCH", hoursAgo: 20, read: true, audience: "seeker", offer: "Delantero Centro – Eccellenza" },
+  { id: "n4", type: "PROPOSAL_RECEIVED", hoursAgo: 30, read: true, audience: "seeker", who: "Sports Link" },
+  { id: "n5", type: "APPLICATION_INTEREST", hoursAgo: 52, read: true, audience: "seeker", who: "Perth United SC" },
+  { id: "n6", type: "APPLICATION_RECEIVED", hoursAgo: 3, read: false, audience: "offerer", who: "Matías Ferreyra", offer: "Delantero Centro – Eccellenza" },
+  { id: "n7", type: "TALENT_MATCH", hoursAgo: 14, read: false, audience: "offerer", who: "Lucas Benítez" },
+  { id: "n8", type: "APPLICATION_RECEIVED", hoursAgo: 40, read: true, audience: "offerer", who: "Joaquín Aranda", offer: "Delantero Centro – Eccellenza" },
+];

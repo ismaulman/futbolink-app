@@ -10,10 +10,12 @@ type Props = {
   onSearch: () => void;
   onMessages: () => void;
   unreadCount: number;
+  onNotifications: () => void;
+  notificationCount: number;
 };
 
 // Barra superior estilo LinkedIn: avatar, buscador y mensajes.
-export default function TopBar({ initials, onAvatar, onSearch, onMessages, unreadCount }: Props) {
+export default function TopBar({ initials, onAvatar, onSearch, onMessages, unreadCount, onNotifications, notificationCount }: Props) {
   const { t } = useTranslation();
   return (
     <View style={styles.bar}>
@@ -24,6 +26,15 @@ export default function TopBar({ initials, onAvatar, onSearch, onMessages, unrea
       <Pressable onPress={onSearch} style={styles.search}>
         <Ionicons name="search-outline" size={16} color={COLORS.muted} />
         <Text style={styles.searchText}>{t("top.search")}</Text>
+      </Pressable>
+
+      <Pressable onPress={onNotifications} hitSlop={10} accessibilityLabel={t("notif.title")}>
+        <Ionicons name="notifications-outline" size={24} color={COLORS.ink} />
+        {notificationCount > 0 && (
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{notificationCount}</Text>
+          </View>
+        )}
       </Pressable>
 
       <Pressable onPress={onMessages} hitSlop={10} accessibilityLabel={t("top.messages")}>
