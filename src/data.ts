@@ -631,3 +631,83 @@ export const INITIAL_PLANS: Plans = { visibility: "free", recruit: "free" };
 
 // Verificación del perfil ("Verificado por FutboLink").
 export type VerificationStatus = "none" | "pending" | "verified";
+
+// Páginas de organización (club, academia, agencia, liga…), como en la web.
+export const ORG_TYPES = [
+  "CLUB",
+  "ACADEMY",
+  "TOURNAMENT_ORGANIZER",
+  "FORMATION_SCHOOL",
+  "AGENCY",
+  "LEAGUE",
+  "FEDERATION",
+  "NATIONAL_TEAM",
+] as const;
+export type OrgType = (typeof ORG_TYPES)[number];
+export type OrgStatus = "DRAFT" | "PENDING_REVIEW" | "APPROVED" | "REJECTED" | "DEACTIVATED";
+
+export type OrgPage = {
+  id: string;
+  type: OrgType;
+  name: string;
+  country: string;
+  region: string;
+  foundationYear: string;
+  description: string;
+  website: string;
+  contactEmail: string;
+  phone: string;
+  instagram: string;
+  twitter: string;
+  youtube: string;
+  facebook: string;
+  tiktok: string;
+  status: OrgStatus;
+  rejectionReason?: string;
+};
+
+export const EMPTY_ORG: Omit<OrgPage, "id" | "status"> = {
+  type: "CLUB",
+  name: "",
+  country: "",
+  region: "",
+  foundationYear: "",
+  description: "",
+  website: "",
+  contactEmail: "",
+  phone: "",
+  instagram: "",
+  twitter: "",
+  youtube: "",
+  facebook: "",
+  tiktok: "",
+};
+
+export const ORG_SOCIALS = ["instagram", "twitter", "youtube", "facebook", "tiktok"] as const;
+
+export const INITIAL_PAGES: OrgPage[] = [
+  {
+    ...EMPTY_ORG,
+    id: "org1",
+    type: "ACADEMY",
+    name: "Academia Norte",
+    country: "Italia",
+    region: "Lombardía",
+    foundationYear: "2012",
+    description: "Academia de formación para juveniles de 12 a 19 años.",
+    website: "https://academianorte.example",
+    contactEmail: "contacto@academianorte.example",
+    instagram: "@academianorte",
+    status: "APPROVED",
+  },
+  {
+    ...EMPTY_ORG,
+    id: "org2",
+    type: "AGENCY",
+    name: "Sports Link",
+    country: "Argentina",
+    region: "Buenos Aires",
+    status: "REJECTED",
+    rejectionReason: "Ya existe una página oficial con este nombre.",
+  },
+];

@@ -14,6 +14,8 @@ type Props = {
   onEdit: () => void;
   onSettings: () => void;
   verified?: boolean;
+  onVerify?: () => void;
+  onOpenPages?: () => void;
 };
 
 function Stat({ value, label }: { value: string; label: string }) {
@@ -36,7 +38,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 // Perfil estilo Instagram/LinkedIn: avatar + números arriba, datos en listas
 // planas con divisores finos, sin cajas ni negritas pesadas.
-export default function PerfilScreen({ user, profile, appliedCount, onEdit, onSettings, verified }: Props) {
+export default function PerfilScreen({ user, profile, appliedCount, onEdit, onSettings, verified, onVerify, onOpenPages }: Props) {
   const { t } = useTranslation();
   const initials = user.name
     .split(" ")
@@ -92,11 +94,25 @@ export default function PerfilScreen({ user, profile, appliedCount, onEdit, onSe
         >
           <Text style={styles.actionText}>{t("profile.edit")}</Text>
         </Pressable>
-        <Pressable style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
+        <Pressable
+          onPress={onVerify}
+          style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}
+        >
           <Ionicons name="shield-checkmark-outline" size={15} color={COLORS.ink} />
           <Text style={styles.actionText}>{t("profile.verify")}</Text>
         </Pressable>
       </View>
+
+      {onOpenPages && (
+        <Pressable onPress={onOpenPages} style={({ pressed }) => [styles.pagesRow, pressed && styles.pressed]}>
+          <Ionicons name="business-outline" size={20} color={COLORS.ink} />
+          <View style={styles.pagesBody}>
+            <Text style={styles.pagesTitle}>{t("org.myPagesTitle")}</Text>
+            <Text style={styles.pagesSub}>{t("org.profileCtaTitle")}</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={COLORS.subtle} />
+        </Pressable>
+      )}
 
       {isPlayer ? (
         <>
@@ -161,6 +177,20 @@ export default function PerfilScreen({ user, profile, appliedCount, onEdit, onSe
 
 const styles = StyleSheet.create({
   content: { paddingBottom: 24 },
+  pagesRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginHorizontal: 16,
+    marginTop: 14,
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: COLORS.divider,
+  },
+  pagesBody: { flex: 1 },
+  pagesTitle: { fontSize: 15, color: COLORS.ink },
+  pagesSub: { fontSize: 12, color: COLORS.muted, marginTop: 2 },
   nameRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   topRow: {
     flexDirection: "row",

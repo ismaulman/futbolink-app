@@ -17,9 +17,12 @@ import {
   AgencyApplication,
   Folder,
   INITIAL_FOLDERS,
+  EMPTY_ORG,
+  INITIAL_PAGES,
   INITIAL_PLANS,
   INITIAL_PORTFOLIO,
   MONTHLY_CREDITS,
+  OrgPage,
   Plans,
   PortfolioEntry,
   VerificationStatus,
@@ -44,6 +47,9 @@ import BuscarScreen from "./src/screens/BuscarScreen";
 import CandidatesScreen from "./src/screens/CandidatesScreen";
 import FoldersScreen from "./src/screens/FoldersScreen";
 import MatchScreen from "./src/screens/MatchScreen";
+import OrgFormScreen from "./src/screens/OrgFormScreen";
+import OrgPageScreen from "./src/screens/OrgPageScreen";
+import OrgPagesScreen from "./src/screens/OrgPagesScreen";
 import PlanScreen from "./src/screens/PlanScreen";
 import VerificationScreen from "./src/screens/VerificationScreen";
 import PortfolioScreen from "./src/screens/PortfolioScreen";
@@ -71,10 +77,13 @@ export default function App() {
   const [savedPlayerIds, setSavedPlayerIds] = useState<string[]>([]);
   const [proposalIds, setProposalIds] = useState<string[]>([]);
   const [overlay, setOverlay] = useState<
-    "edit" | "settings" | "messages" | "publish" | "candidates" | "folders" | "portfolio" | "match" | "plan" | "verification" | null
+    "edit" | "settings" | "messages" | "publish" | "candidates" | "folders" | "portfolio" | "match" | "plan" | "verification" | "pages" | "pageForm" | "pageDetail" | null
   >(null);
   const [myOffers, setMyOffers] = useState<MyOffer[]>(INITIAL_MY_OFFERS);
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+  const [pages, setPages] = useState<OrgPage[]>(INITIAL_PAGES);
+  const [activePageId, setActivePageId] = useState<string | null>(null);
+  const [editingPage, setEditingPage] = useState(false);
   const [plans, setPlans] = useState<Plans>(INITIAL_PLANS);
   const [verification, setVerification] = useState<VerificationStatus>("none");
   const [portfolio, setPortfolio] = useState<PortfolioEntry[]>(INITIAL_PORTFOLIO);
@@ -220,6 +229,7 @@ export default function App() {
     setOverlay(null);
     setProfile(INITIAL_PROFILE);
     setPlans(INITIAL_PLANS);
+    setPages(INITIAL_PAGES);
     setVerification("none");
     setPrefs(INITIAL_PREFS);
   };
@@ -380,6 +390,55 @@ export default function App() {
         }}
       />
     );
+  } else if (overlay === "pages") {
+    content = (
+      <OrgPagesScreen
+        pages={pages}
+        onOpen={(page) => {
+          setActivePageId(page.id);
+          setOverlay("pageDetail");
+        }}
+        onCreate={() => {
+          setEditingPage(false);
+          setOverlay("pageForm");
+        }}
+        onBack={() => setOverlay(null)}
+      />
+    );
+  } else if (overlay === "pageForm") {
+    const current = pages.find((p) => p.id === activePageId) ?? null;
+    content = (
+      <OrgFormScreen
+        page={editingPage ? current : null}
+        onBack={() => setOverlay(editingPage ? "pageDetail" : "pages")}
+        onSubmit={(data) => {
+          if (editingPage && current) {
+            // Si la rechazaron, al volver a guardarla pasa de nuevo a revisión.
+            const status = current.status === "REJECTED" ? "PENDING_REVIEW" : current.status;
+            setPages((c) => c.map((p) => (p.id === current.id ? { ...p, ...data, status, rejectionReason: undefined } : p)));
+            setOverlay("pageDetail");
+          } else {
+            const created: OrgPage = { ...EMPTY_ORG, ...data, id: "org" + (pages.length + 1) + "-" + Date.now(), status: "APPROVED" };
+            setPages((c) => [...c, created]);
+            setActivePageId(created.id);
+            setOverlay("pageDetail");
+          }
+        }}
+      />
+    );
+  } else if (overlay === "pageDetail" && pages.some((p) => p.id === activePageId)) {
+    const page = pages.find((p) => p.id === activePageId) as OrgPage;
+    content = (
+      <OrgPageScreen
+        page={page}
+        portfolioPlayerIds={portfolio.filter((e) => e.status === "active").map((e) => e.playerId)}
+        onEdit={() => {
+          setEditingPage(true);
+          setOverlay("pageForm");
+        }}
+        onBack={() => setOverlay("pages")}
+      />
+    );
   } else if (overlay === "plan") {
     content = <PlanScreen role={user.role} plans={plans} onChange={setPlans} onBack={() => setOverlay("settings")} />;
   } else if (overlay === "verification") {
@@ -461,6 +520,8 @@ export default function App() {
         onEdit={() => setOverlay("edit")}
         onSettings={() => setOverlay("settings")}
         verified={verification === "verified"}
+        onVerify={() => setOverlay("verification")}
+        onOpenPages={user.role !== "player" ? () => setOverlay("pages") : undefined}
       />
     );
   }
