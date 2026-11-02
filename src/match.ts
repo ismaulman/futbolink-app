@@ -1,4 +1,4 @@
-import { MOCK_PLAYERS, Player } from "./data";
+import { MOCK_PLAYERS, Offer, Player } from "./data";
 
 // Mismo esquema que Recruit Match de la plataforma (back/.../recruit-match):
 // puntaje 0-100 por dimensiones con pesos fijos. Solo se calculan las que los
@@ -28,7 +28,7 @@ export type MatchResult = {
   breakdown: { key: DimensionKey; status: DimensionStatus }[];
 };
 
-const EU_COUNTRIES = [
+export const EU_COUNTRIES = [
   "Italia", "España", "Francia", "Alemania", "Portugal", "Rumania", "Grecia",
   "Países Bajos", "Bélgica", "Croacia", "Polonia", "Austria", "Irlanda",
 ];
@@ -67,4 +67,50 @@ function evaluate(player: Player, c: MatchCriteria): MatchResult {
 // Ordena (no bloquea): el que mejor encaja, primero.
 export function runMatch(criteria: MatchCriteria): MatchResult[] {
   return MOCK_PLAYERS.map((p) => evaluate(p, criteria)).sort((a, b) => b.score - a.score);
+}
+
+// Compatibilidad de un postulante con la oferta (misma lógica que utils/offerMatch.ts
+// de la web): pesos fijos, los criterios sin datos no penalizan y la experiencia
+// funciona como techo. Devuelve null si no se puede evaluar.
+export type OfferCriterion = "primary" | "experience" | "secondary" | "euPassport" | "age";
+const OFFER_WEIGHTS: Record<OfferCriterion, number> = {
+  primary: 35,
+  experience: 35,
+  secondary: 5,
+  euPassport: 8,
+  age: 8,
+};
+
+export function offerMatch(player: Player, offer: Offer | null): number | null {
+  if (!offer || offer.positions.length === 0) return null;
+  const scores: Partial<Record<OfferCriterion, number>> = {};
+
+  const primary = offer.positions.includes(player.position);
+  const secondary = player.secondaryPosition ? offer.positions.includes(player.secondaryPosition) : false;
+  // Una posición totalmente incompatible deja el match en 0%.
+  if (!primary && !secondary) return 0;
+  scores.primary = primary ? 100 : 0;
+  scores.secondary = secondary ? 100 : 0;
+
+  const required = (offer.minExperience || offer.category) as keyof typeof CATEGORY_RANK;
+  if (CATEGORY_RANK[required]) {
+    const gap = CATEGORY_RANK[required] - CATEGORY_RANK[player.category];
+    scores.experience = gap <= 0 ? 100 : gap === 1 ? 50 : 0;
+  }
+  if (offer.euPassport === "Si") scores.euPassport = EU_COUNTRIES.includes(player.country) ? 100 : 0;
+  if (offer.minAge !== null || offer.maxAge !== null) {
+    const okMin = offer.minAge === null || player.age >= offer.minAge;
+    const okMax = offer.maxAge === null || player.age <= offer.maxAge;
+    scores.age = okMin && okMax ? 100 : 0;
+  }
+
+  let weight = 0;
+  let points = 0;
+  for (const key of Object.keys(scores) as OfferCriterion[]) {
+    weight += OFFER_WEIGHTS[key];
+    points += ((scores[key] as number) / 100) * OFFER_WEIGHTS[key];
+  }
+  const weighted = weight > 0 ? Math.round((points / weight) * 100) : 0;
+  const cap = scores.experience === undefined ? 100 : Math.min(100, Math.round(50 + scores.experience * 0.5));
+  return Math.min(100, weighted, cap);
 }

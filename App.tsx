@@ -167,6 +167,19 @@ export default function App() {
     );
   };
 
+  // Al abrir la lista de postulantes, los que estaban "Postulados" pasan a "En revisión".
+  const openOfferCandidates = (offer: MyOffer) => {
+    setMyOffers((current) =>
+      current.map((o) =>
+        o.id === offer.id
+          ? { ...o, candidates: o.candidates.map((c) => (c.viewed || c.interested ? c : { ...c, inReview: true })) }
+          : o,
+      ),
+    );
+    setActiveOfferId(offer.id);
+    setOverlay("candidates");
+  };
+
   const openCandidate = (player: Player) => {
     setMyOffers((current) =>
       current.map((offer) =>
@@ -400,8 +413,21 @@ export default function App() {
     content = (
       <CandidatesScreen
         offer={myOffers.find((o) => o.id === activeOfferId) as MyOffer}
+        offerDetail={
+          allOffers.find((o) => o.id === activeOfferId) ??
+          allOffers.find((o) => o.title === myOffers.find((m) => m.id === activeOfferId)?.title) ??
+          null
+        }
+        canRequestRepresentation={user.role === "agency"}
         onOpenPlayer={openCandidate}
         onToggle={toggleCandidate}
+        onRequestRepresentation={(playerId) =>
+          setPortfolio((c) => (c.some((e) => e.playerId === playerId) ? c : [...c, { playerId, status: "pending" }]))
+        }
+        onOpenOffer={(offer) => {
+          setOverlay(null);
+          setSelectedOffer(offer);
+        }}
         onBack={() => setOverlay(null)}
       />
     );
@@ -569,10 +595,7 @@ export default function App() {
         onEditProfile={() => setOverlay("edit")}
         onOpenPlan={() => setOverlay("plan")}
         onOpenNotifications={() => setOverlay("notifications")}
-        onOpenMyOffer={(offer) => {
-          setActiveOfferId(offer.id);
-          setOverlay("candidates");
-        }}
+        onOpenMyOffer={openOfferCandidates}
         onPublish={() => setOverlay("publish")}
       />
     );
@@ -593,10 +616,7 @@ export default function App() {
         offers={myOffers}
         folders={folders}
         onPublish={() => setOverlay("publish")}
-        onOpenOffer={(offer) => {
-          setActiveOfferId(offer.id);
-          setOverlay("candidates");
-        }}
+        onOpenOffer={openOfferCandidates}
         onOpenFolders={() => setOverlay("folders")}
         onOpenMatch={() => setOverlay("match")}
         portfolioCount={user.role === "agency" ? portfolio.filter((e) => e.status === "active").length : undefined}

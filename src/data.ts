@@ -561,6 +561,7 @@ export type Candidate = {
   hoursAgo: number;
   viewed: boolean;
   interested: boolean; // "Me interesa"
+  inReview: boolean; // el ofertante abrió la lista de postulantes
   shortlisted: boolean; // candidato preseleccionado dentro de esta oferta
 };
 
@@ -581,9 +582,9 @@ export const INITIAL_MY_OFFERS: MyOffer[] = [
     status: "ACTIVE",
     postedHoursAgo: 96,
     candidates: [
-      { playerId: "p1", hoursAgo: 5, viewed: false, interested: false, shortlisted: false },
-      { playerId: "p5", hoursAgo: 20, viewed: false, interested: false, shortlisted: false },
-      { playerId: "p2", hoursAgo: 40, viewed: true, interested: true, shortlisted: false },
+      { playerId: "p1", hoursAgo: 5, viewed: false, interested: false, inReview: false, shortlisted: false },
+      { playerId: "p5", hoursAgo: 20, viewed: false, interested: false, inReview: false, shortlisted: false },
+      { playerId: "p2", hoursAgo: 40, viewed: true, interested: true, inReview: false, shortlisted: false },
     ],
   },
   {
@@ -593,7 +594,7 @@ export const INITIAL_MY_OFFERS: MyOffer[] = [
     status: "ACTIVE",
     postedHoursAgo: 170,
     candidates: [
-      { playerId: "p4", hoursAgo: 60, viewed: true, interested: false, shortlisted: true },
+      { playerId: "p4", hoursAgo: 60, viewed: true, interested: false, inReview: false, shortlisted: true },
     ],
   },
 ];
@@ -744,3 +745,14 @@ export const INITIAL_NOTIFICATIONS: AppNotification[] = [
   { id: "n7", type: "TALENT_MATCH", hoursAgo: 14, read: false, audience: "offerer", who: "Lucas Benítez" },
   { id: "n8", type: "APPLICATION_RECEIVED", hoursAgo: 40, read: true, audience: "offerer", who: "Joaquín Aranda", offer: "Delantero Centro – Eccellenza" },
 ];
+
+// Estado de una postulación, como en la web: Postulado → En revisión → Perfil visto → Interés.
+export type ApplicationStatus = "PENDING" | "IN_REVIEW" | "PROFILE_VIEWED" | "INTERESTED";
+export const APPLICATION_STATUSES: ApplicationStatus[] = ["PENDING", "IN_REVIEW", "PROFILE_VIEWED", "INTERESTED"];
+
+export function candidateStatus(c: Candidate): ApplicationStatus {
+  if (c.interested) return "INTERESTED";
+  if (c.viewed) return "PROFILE_VIEWED";
+  if (c.inReview) return "IN_REVIEW";
+  return "PENDING";
+}
