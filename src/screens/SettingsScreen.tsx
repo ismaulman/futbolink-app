@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Switch, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import Text from "../components/AppText";
 import ScreenHeader from "../components/ScreenHeader";
-import { NotificationPrefs } from "../data";
+import { NotificationPrefs, VerificationStatus } from "../data";
 import i18n, { LANGUAGES } from "../i18n";
 import { COLORS, RADIUS } from "../theme";
 
@@ -12,6 +12,9 @@ type Props = {
   email: string;
   prefs: NotificationPrefs;
   onPrefsChange: (prefs: NotificationPrefs) => void;
+  verification: VerificationStatus;
+  onOpenPlan: () => void;
+  onOpenVerification: () => void;
   onLogout: () => void;
   onBack: () => void;
 };
@@ -43,17 +46,37 @@ function ToggleRow({
   );
 }
 
-function LinkRow({ icon, label }: { icon: keyof typeof Ionicons.glyphMap; label: string }) {
+function LinkRow({
+  icon,
+  label,
+  detail,
+  onPress,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  label: string;
+  detail?: string;
+  onPress?: () => void;
+}) {
   return (
-    <Pressable style={({ pressed }) => [styles.linkRow, pressed && { opacity: 0.7 }]}>
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.linkRow, pressed && { opacity: 0.7 }]}>
       <Ionicons name={icon} size={20} color={COLORS.ink} />
       <Text style={styles.linkText}>{label}</Text>
+      {detail ? <Text style={styles.rowDescription}>{detail}</Text> : null}
       <Ionicons name="chevron-forward" size={18} color={COLORS.subtle} />
     </Pressable>
   );
 }
 
-export default function SettingsScreen({ email, prefs, onPrefsChange, onLogout, onBack }: Props) {
+export default function SettingsScreen({
+  email,
+  prefs,
+  onPrefsChange,
+  verification,
+  onOpenPlan,
+  onOpenVerification,
+  onLogout,
+  onBack,
+}: Props) {
   const { t } = useTranslation();
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -98,6 +121,13 @@ export default function SettingsScreen({ email, prefs, onPrefsChange, onLogout, 
           <Text style={styles.rowDescription}>{t("auth.email")}</Text>
           <Text style={styles.rowTitle}>{email}</Text>
         </View>
+        <LinkRow icon="ribbon-outline" label={t("plan.title")} onPress={onOpenPlan} />
+        <LinkRow
+          icon="shield-checkmark-outline"
+          label={t("verify.title")}
+          detail={t(`verify.status_${verification}`)}
+          onPress={onOpenVerification}
+        />
         <LinkRow icon="help-circle-outline" label={t("settings.help")} />
         <LinkRow icon="document-text-outline" label={t("settings.terms")} />
 

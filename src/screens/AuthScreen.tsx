@@ -95,6 +95,8 @@ export default function AuthScreen({ onSubmit }: Props) {
       name: `${firstName.trim()} ${lastName.trim()}`,
       email: email.trim(),
       role,
+      phone: phone.trim(),
+      nationality: nationality.trim(),
       puesto: role === "player" ? undefined : puesto === OTHER ? otherPuesto.trim() : puesto,
     });
   };

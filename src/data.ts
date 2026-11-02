@@ -29,6 +29,9 @@ export type User = {
   role: Role;
   // id de STAFF_PUESTOS / AGENCY_PUESTOS, o el texto libre si eligió "Otro".
   puesto?: string;
+  // Datos del registro que pasan al perfil.
+  phone?: string;
+  nationality?: string;
 };
 
 export type OfferType = "player" | "staff";
@@ -360,6 +363,10 @@ export type Profile = {
   heightCm: string;
   weightKg: string;
   videoUrls: string[]; // links de YouTube
+  phone: string;
+  social: string; // red social o sitio web
+  agencyName: string; // solo agencias
+  hasPhoto: boolean;
 };
 
 export const INITIAL_PROFILE: Profile = {
@@ -371,6 +378,10 @@ export const INITIAL_PROFILE: Profile = {
   heightCm: "178",
   weightKg: "72",
   videoUrls: [],
+  phone: "",
+  social: "",
+  agencyName: "",
+  hasPhoto: false,
 };
 
 // Preferencias de notificación (PATCH /user/:id/notification-preferences).
@@ -608,3 +619,15 @@ export const MONTHLY_CREDITS = 10;
 
 // Postulación hecha por la agencia en nombre de un jugador.
 export type AgencyApplication = { playerId: string; offerId: string };
+
+// Planes. Se contratan en la web; la app solo los muestra (reglas de las tiendas).
+export type VisibilityPlan = "free" | "amateur" | "semiprofesional" | "profesional";
+export type RecruitPlan = "free" | "basic" | "pro" | "match";
+export type Plans = { visibility: VisibilityPlan; recruit: RecruitPlan };
+
+export const VISIBILITY_PLANS: VisibilityPlan[] = ["free", "amateur", "semiprofesional", "profesional"];
+export const RECRUIT_PLANS: RecruitPlan[] = ["free", "basic", "pro", "match"];
+export const INITIAL_PLANS: Plans = { visibility: "free", recruit: "free" };
+
+// Verificación del perfil ("Verificado por FutboLink").
+export type VerificationStatus = "none" | "pending" | "verified";

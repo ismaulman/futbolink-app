@@ -13,6 +13,7 @@ type Props = {
   appliedCount: number;
   onEdit: () => void;
   onSettings: () => void;
+  verified?: boolean;
 };
 
 function Stat({ value, label }: { value: string; label: string }) {
@@ -35,7 +36,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 // Perfil estilo Instagram/LinkedIn: avatar + números arriba, datos en listas
 // planas con divisores finos, sin cajas ni negritas pesadas.
-export default function PerfilScreen({ user, profile, appliedCount, onEdit, onSettings }: Props) {
+export default function PerfilScreen({ user, profile, appliedCount, onEdit, onSettings, verified }: Props) {
   const { t } = useTranslation();
   const initials = user.name
     .split(" ")
@@ -73,7 +74,10 @@ export default function PerfilScreen({ user, profile, appliedCount, onEdit, onSe
       </View>
 
       <View style={styles.bio}>
-        <Text style={styles.name}>{user.name}</Text>
+        <View style={styles.nameRow}>
+          <Text style={styles.name}>{user.name}</Text>
+          {verified && <Ionicons name="checkmark-circle" size={16} color={COLORS.primary} />}
+        </View>
         <Text style={styles.role}>
           {roleLabel}
           {isPlayer ? ` · ${tc(profile.position)}` : ""}
@@ -157,6 +161,7 @@ export default function PerfilScreen({ user, profile, appliedCount, onEdit, onSe
 
 const styles = StyleSheet.create({
   content: { paddingBottom: 24 },
+  nameRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   topRow: {
     flexDirection: "row",
     alignItems: "center",

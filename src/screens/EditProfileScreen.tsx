@@ -78,6 +78,27 @@ export default function EditProfileScreen({ name, role, profile, onSave, onBack 
           value={draft.location}
           onChangeText={(v) => update({ location: v })}
         />
+        <Field
+          label={t("edit.phone")}
+          value={draft.phone}
+          keyboardType="phone-pad"
+          onChangeText={(v) => update({ phone: v })}
+        />
+        <Field
+          label={t("edit.social")}
+          value={draft.social}
+          autoCapitalize="none"
+          autoCorrect={false}
+          placeholder="instagram.com/..."
+          onChangeText={(v) => update({ social: v })}
+        />
+        {role === "agency" && (
+          <Field
+            label={t("edit.agencyName")}
+            value={draft.agencyName}
+            onChangeText={(v) => update({ agencyName: v })}
+          />
+        )}
 
         {isPlayer && (
           <>

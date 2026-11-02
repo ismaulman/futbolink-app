@@ -17,9 +17,12 @@ import {
   AgencyApplication,
   Folder,
   INITIAL_FOLDERS,
+  INITIAL_PLANS,
   INITIAL_PORTFOLIO,
   MONTHLY_CREDITS,
+  Plans,
   PortfolioEntry,
+  VerificationStatus,
   INITIAL_MY_OFFERS,
   INITIAL_PREFS,
   INITIAL_PROFILE,
@@ -41,6 +44,8 @@ import BuscarScreen from "./src/screens/BuscarScreen";
 import CandidatesScreen from "./src/screens/CandidatesScreen";
 import FoldersScreen from "./src/screens/FoldersScreen";
 import MatchScreen from "./src/screens/MatchScreen";
+import PlanScreen from "./src/screens/PlanScreen";
+import VerificationScreen from "./src/screens/VerificationScreen";
 import PortfolioScreen from "./src/screens/PortfolioScreen";
 import PanelScreen from "./src/screens/PanelScreen";
 import PublishOfferScreen from "./src/screens/PublishOfferScreen";
@@ -66,10 +71,12 @@ export default function App() {
   const [savedPlayerIds, setSavedPlayerIds] = useState<string[]>([]);
   const [proposalIds, setProposalIds] = useState<string[]>([]);
   const [overlay, setOverlay] = useState<
-    "edit" | "settings" | "messages" | "publish" | "candidates" | "folders" | "portfolio" | "match" | null
+    "edit" | "settings" | "messages" | "publish" | "candidates" | "folders" | "portfolio" | "match" | "plan" | "verification" | null
   >(null);
   const [myOffers, setMyOffers] = useState<MyOffer[]>(INITIAL_MY_OFFERS);
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+  const [plans, setPlans] = useState<Plans>(INITIAL_PLANS);
+  const [verification, setVerification] = useState<VerificationStatus>("none");
   const [portfolio, setPortfolio] = useState<PortfolioEntry[]>(INITIAL_PORTFOLIO);
   const [agencyApps, setAgencyApps] = useState<AgencyApplication[]>([]);
   const [folders, setFolders] = useState<Folder[]>(INITIAL_FOLDERS);
@@ -212,6 +219,8 @@ export default function App() {
     setSelectedPlayer(null);
     setOverlay(null);
     setProfile(INITIAL_PROFILE);
+    setPlans(INITIAL_PLANS);
+    setVerification("none");
     setPrefs(INITIAL_PREFS);
   };
 
@@ -224,7 +233,17 @@ export default function App() {
       <SafeAreaProvider>
         <StatusBar style="dark" />
         <SafeAreaView style={styles.root}>
-          <AuthScreen onSubmit={setUser} />
+          <AuthScreen
+            onSubmit={(next) => {
+              setUser(next);
+              // Los datos del registro pasan al perfil.
+              setProfile((p) => ({
+                ...p,
+                phone: next.phone ?? p.phone,
+                nationality: next.nationality || p.nationality,
+              }));
+            }}
+          />
         </SafeAreaView>
       </SafeAreaProvider>
     );
@@ -361,12 +380,31 @@ export default function App() {
         }}
       />
     );
+  } else if (overlay === "plan") {
+    content = <PlanScreen role={user.role} plans={plans} onChange={setPlans} onBack={() => setOverlay("settings")} />;
+  } else if (overlay === "verification") {
+    content = (
+      <VerificationScreen
+        role={user.role}
+        name={user.name}
+        profile={profile}
+        status={verification}
+        onAddPhoto={() => setProfile((p) => ({ ...p, hasPhoto: true }))}
+        onEditProfile={() => setOverlay("edit")}
+        onRequest={() => setVerification("pending")}
+        onSimulateApproval={() => setVerification("verified")}
+        onBack={() => setOverlay("settings")}
+      />
+    );
   } else if (overlay === "settings") {
     content = (
       <SettingsScreen
         email={user.email}
         prefs={prefs}
         onPrefsChange={setPrefs}
+        verification={verification}
+        onOpenPlan={() => setOverlay("plan")}
+        onOpenVerification={() => setOverlay("verification")}
         onLogout={logout}
         onBack={() => setOverlay(null)}
       />
@@ -422,6 +460,7 @@ export default function App() {
         appliedCount={appliedIds.length}
         onEdit={() => setOverlay("edit")}
         onSettings={() => setOverlay("settings")}
+        verified={verification === "verified"}
       />
     );
   }
