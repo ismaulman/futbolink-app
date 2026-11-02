@@ -13,6 +13,7 @@ type Section = "offers" | "signings" | "countries" | "news";
 const SECTIONS: Section[] = ["offers", "signings", "countries", "news"];
 
 type Props = {
+  offers: Offer[];
   appliedIds: string[];
   savedIds: string[];
   onOpenOffer: (offer: Offer) => void;
@@ -42,7 +43,7 @@ export default function ExploreScreen(props: Props) {
       </View>
       {section === "offers" && <MercadoScreen {...props} />}
       {section === "signings" && <FichajesScreen />}
-      {section === "countries" && <PaisesScreen onOpenOffer={props.onOpenOffer} />}
+      {section === "countries" && <PaisesScreen offers={props.offers} onOpenOffer={props.onOpenOffer} />}
       {section === "news" && <NoticiasScreen />}
     </View>
   );

@@ -568,5 +568,7 @@
   "home.item_social": "red social",
   "home.item_position": "posición",
   "home.item_body": "altura y peso",
-  "home.item_video": "un video"
+  "home.item_video": "un video",
+  "messages.proposalSubject": "Propuesta a {{name}}",
+  "messages.proposalBody": "Hola {{name}}, vimos tu perfil en FutboLink y nos interesa conversar con vos."
 }

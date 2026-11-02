@@ -31,6 +31,7 @@ import {
   INITIAL_MY_OFFERS,
   INITIAL_PREFS,
   INITIAL_PROFILE,
+  MOCK_OFFERS,
   MOCK_THREADS,
   MyOffer,
   NotificationPrefs,
@@ -85,6 +86,7 @@ export default function App() {
   >(null);
   const [myOffers, setMyOffers] = useState<MyOffer[]>(INITIAL_MY_OFFERS);
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+  const [publishedOffers, setPublishedOffers] = useState<Offer[]>([]);
   const [notifications, setNotifications] = useState<AppNotification[]>(INITIAL_NOTIFICATIONS);
   const [pages, setPages] = useState<OrgPage[]>(INITIAL_PAGES);
   const [activePageId, setActivePageId] = useState<string | null>(null);
@@ -236,6 +238,9 @@ export default function App() {
     setPlans(INITIAL_PLANS);
     setPages(INITIAL_PAGES);
     setNotifications(INITIAL_NOTIFICATIONS);
+    setPublishedOffers([]);
+    setProposalIds([]);
+    setMyOffers(INITIAL_MY_OFFERS);
     setTab("inicio");
     setVerification("none");
     setPrefs(INITIAL_PREFS);
@@ -267,6 +272,8 @@ export default function App() {
   }
 
   // Los avisos de quien publica ofertas (agencia) son distintos a los de quien busca.
+  // Las ofertas que publicás aparecen en el Mercado junto con las de ejemplo.
+  const allOffers = [...publishedOffers, ...MOCK_OFFERS];
   const myAudience = user.role === "agency" ? "offerer" : "seeker";
   const initials = user.name
     .split(" ")
@@ -286,9 +293,31 @@ export default function App() {
         saved={savedPlayerIds.includes(selectedPlayer.id)}
         proposalSent={proposalIds.includes(selectedPlayer.id)}
         onToggleSave={() => toggleSavePlayer(selectedPlayer.id)}
-        onSendProposal={() =>
-          setProposalIds((c) => (c.includes(selectedPlayer.id) ? c : [...c, selectedPlayer.id]))
-        }
+        onSendProposal={() => {
+          if (proposalIds.includes(selectedPlayer.id)) return;
+          setProposalIds((c) => [...c, selectedPlayer.id]);
+          setThreads((c) => [
+            {
+              id: `tp-${selectedPlayer.id}-${Date.now()}`,
+              kind: "PROPOSAL",
+              subject: i18n.t("messages.proposalSubject", { name: selectedPlayer.name }),
+              withName: selectedPlayer.name,
+              status: "OPEN",
+              unread: false,
+              iAmRecipient: false,
+              hoursAgo: 0,
+              messages: [
+                {
+                  id: `tpm-${Date.now()}`,
+                  fromMe: true,
+                  body: i18n.t("messages.proposalBody", { name: selectedPlayer.name }),
+                  hoursAgo: 0,
+                },
+              ],
+            },
+            ...c,
+          ]);
+        }}
         folders={folders}
         onToggleFolder={(folderId) => toggleInFolder(folderId, selectedPlayer.id)}
         onBack={() => setSelectedPlayer(null)}
@@ -326,14 +355,39 @@ export default function App() {
         onBack={() => setOverlay(null)}
         onPublish={(draft) => {
           const fallback = `${tc(draft.position)} – ${tc(draft.category)}`;
+          const title = draft.title.trim() || fallback;
+          const id = `mo${Date.now()}`;
+          const knownFlag = MOCK_OFFERS.find((o) => o.country === draft.country.trim())?.flag;
+          const ownPage = pages.find((p) => p.status === "APPROVED");
           setMyOffers((current) => [
+            { id, type: draft.type, title, status: "ACTIVE", postedHoursAgo: 0, candidates: [] },
+            ...current,
+          ]);
+          // En la plataforma la revisa el equipo antes de mostrarla; acá se aprueba al instante.
+          setPublishedOffers((current) => [
             {
-              id: `mo${Date.now()}`,
+              id,
               type: draft.type,
-              title: draft.title.trim() || fallback,
-              status: "PENDING",
+              flag: knownFlag ?? "🌍",
+              country: draft.country.trim(),
+              region: [draft.city.trim(), draft.country.trim()].filter(Boolean).join(", "),
+              club: ownPage?.name ?? user.name,
+              league: "",
+              title,
+              salary: draft.salary ? `${draft.currency}${draft.salary}` : "",
               postedHoursAgo: 0,
-              candidates: [],
+              description: draft.description.trim(),
+              positions: [draft.position],
+              category: draft.category,
+              sportGenres: draft.genre,
+              contractDuration: draft.contract,
+              minExperience: "",
+              minAge: draft.minAge ? parseInt(draft.minAge, 10) : null,
+              maxAge: draft.maxAge ? parseInt(draft.maxAge, 10) : null,
+              euPassport: "No",
+              availabilityToTravel: "No",
+              extras: draft.extras,
+              requirements: [],
             },
             ...current,
           ]);
@@ -354,6 +408,7 @@ export default function App() {
   } else if (overlay === "portfolio" && user.role === "agency") {
     content = (
       <PortfolioScreen
+        offers={allOffers}
         portfolio={portfolio}
         applications={agencyApps}
         onRequest={(playerId) =>
@@ -499,6 +554,7 @@ export default function App() {
   } else if (tab === "inicio") {
     content = (
       <HomeScreen
+        offers={allOffers}
         user={user}
         profile={profile}
         plans={plans}
@@ -523,6 +579,7 @@ export default function App() {
   } else if (tab === "mercado") {
     content = (
       <ExploreScreen
+        offers={allOffers}
         appliedIds={appliedIds}
         savedIds={savedIds}
         onOpenOffer={setSelectedOffer}

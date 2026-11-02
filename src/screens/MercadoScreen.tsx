@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import Text from "../components/AppText";
 import ChipGroup from "../components/ChipGroup";
 import OfferCard from "../components/OfferCard";
-import { MOCK_OFFERS, Offer } from "../data";
+import { Offer } from "../data";
 import { tc } from "../i18n";
 import { COLORS, RADIUS } from "../theme";
 
@@ -28,6 +28,7 @@ const ALL = "";
 const unique = (values: string[]) => Array.from(new Set(values));
 
 type Props = {
+  offers: Offer[];
   appliedIds: string[];
   savedIds: string[];
   onOpenOffer: (offer: Offer) => void;
@@ -36,6 +37,7 @@ type Props = {
 };
 
 export default function MercadoScreen({
+  offers: allOffers,
   appliedIds,
   savedIds,
   onOpenOffer,
@@ -50,13 +52,13 @@ export default function MercadoScreen({
   const [category, setCategory] = useState(ALL);
   const [position, setPosition] = useState(ALL);
 
-  const countries = useMemo(() => unique(MOCK_OFFERS.map((o) => o.country)), []);
-  const categories = useMemo(() => unique(MOCK_OFFERS.map((o) => o.category)), []);
-  const positions = useMemo(() => unique(MOCK_OFFERS.flatMap((o) => o.positions)), []);
+  const countries = useMemo(() => unique(allOffers.map((o) => o.country)), [allOffers]);
+  const categories = useMemo(() => unique(allOffers.map((o) => o.category)), [allOffers]);
+  const positions = useMemo(() => unique(allOffers.flatMap((o) => o.positions)), [allOffers]);
 
   const activeFilters = [country, category, position].filter((v) => v !== ALL).length;
 
-  const offers = MOCK_OFFERS.filter((offer) => {
+  const offers = allOffers.filter((offer) => {
     if (view === "saved" && !savedIds.includes(offer.id)) return false;
     if (view === "applied" && !appliedIds.includes(offer.id)) return false;
     if (type !== "all" && offer.type !== type) return false;

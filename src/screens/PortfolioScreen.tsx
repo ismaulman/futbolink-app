@@ -4,11 +4,12 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import Text from "../components/AppText";
 import ScreenHeader from "../components/ScreenHeader";
-import { AgencyApplication, MONTHLY_CREDITS, MOCK_OFFERS, MOCK_PLAYERS, Player, PortfolioEntry } from "../data";
+import { AgencyApplication, MONTHLY_CREDITS, MOCK_PLAYERS, Offer, Player, PortfolioEntry } from "../data";
 import { tc } from "../i18n";
 import { COLORS, RADIUS } from "../theme";
 
 type Props = {
+  offers: Offer[];
   portfolio: PortfolioEntry[];
   applications: AgencyApplication[];
   onRequest: (playerId: string) => void;
@@ -21,6 +22,7 @@ type Props = {
 // Portafolio de la agencia: jugadores representados, solicitudes de representación
 // y postulaciones en nombre de un jugador (cada una gasta 1 crédito del mes).
 export default function PortfolioScreen({
+  offers,
   portfolio,
   applications,
   onRequest,
@@ -48,7 +50,7 @@ export default function PortfolioScreen({
         <ScrollView contentContainerStyle={styles.content}>
           <Text style={styles.credits}>{t("portfolio.creditsLeft", { left: credits, total: MONTHLY_CREDITS })}</Text>
           {credits <= 0 && <Text style={styles.warning}>{t("portfolio.noCredits")}</Text>}
-          {MOCK_OFFERS.filter((o) => o.type === "player").map((offer) => {
+          {offers.filter((o) => o.type === "player").map((offer) => {
             const done = applications.some((a) => a.playerId === target.id && a.offerId === offer.id);
             const disabled = done || credits <= 0;
             return (

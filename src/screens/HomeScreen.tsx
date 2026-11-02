@@ -2,12 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import Text from "../components/AppText";
-import { AppNotification, MOCK_OFFERS, MyOffer, Offer, Plans, Profile, Role, User } from "../data";
+import { AppNotification, MyOffer, Offer, Plans, Profile, Role, User } from "../data";
 import { timeAgo } from "../i18n/format";
 import { COLORS, RADIUS } from "../theme";
 import { NotificationRow } from "./NotificationsScreen";
 
 type Props = {
+  offers: Offer[];
   user: User;
   profile: Profile;
   plans: Plans;
@@ -65,7 +66,7 @@ export default function HomeScreen(props: Props) {
   const isOfferer = user.role !== "player"; // staff y agencia publican
   const firstName = user.name.split(" ")[0];
 
-  const applied = MOCK_OFFERS.filter((o) => appliedIds.includes(o.id));
+  const applied = props.offers.filter((o) => appliedIds.includes(o.id));
   const feed = notifications.filter((n) => n.audience === (isOfferer && isAgency ? "offerer" : "seeker"));
   const candidates = myOffers.flatMap((o) => o.candidates);
   const { percent, missing } = completeness(user.role, user.name, profile);

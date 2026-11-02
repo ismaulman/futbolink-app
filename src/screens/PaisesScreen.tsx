@@ -3,20 +3,20 @@ import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import Text from "../components/AppText";
-import { MOCK_OFFERS, Offer } from "../data";
+import { Offer } from "../data";
 import { tc } from "../i18n";
 import { COLORS } from "../theme";
 
-type Props = { onOpenOffer: (offer: Offer) => void };
+type Props = { offers: Offer[]; onOpenOffer: (offer: Offer) => void };
 
 // Mercado por país: dónde hay más ofertas abiertas y en cuántas ligas.
-export default function PaisesScreen({ onOpenOffer }: Props) {
+export default function PaisesScreen({ offers: allOffers, onOpenOffer }: Props) {
   const { t } = useTranslation();
   const [country, setCountry] = useState<string | null>(null);
 
   const countries = useMemo(() => {
     const map = new Map<string, { flag: string; offers: Offer[] }>();
-    for (const offer of MOCK_OFFERS) {
+    for (const offer of allOffers) {
       const entry = map.get(offer.country) ?? { flag: offer.flag, offers: [] };
       entry.offers.push(offer);
       map.set(offer.country, entry);
@@ -29,7 +29,7 @@ export default function PaisesScreen({ onOpenOffer }: Props) {
         leagues: new Set(offers.map((o) => o.league)).size,
       }))
       .sort((a, b) => b.offers.length - a.offers.length);
-  }, []);
+  }, [allOffers]);
 
   const selected = countries.find((c) => c.name === country);
 
