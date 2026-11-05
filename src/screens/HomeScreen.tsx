@@ -2,9 +2,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import Text from "../components/AppText";
-import { AppNotification, MyOffer, Offer, Plans, Profile, Role, User } from "../data";
+import { ApplicationStatus, AppNotification, MyOffer, Offer, Plans, Profile, Role, User } from "../data";
 import { timeAgo } from "../i18n/format";
 import { COLORS, RADIUS } from "../theme";
+import { StatusPill } from "./MyApplicationsScreen";
 import { NotificationRow } from "./NotificationsScreen";
 
 type Props = {
@@ -23,6 +24,8 @@ type Props = {
   onEditProfile: () => void;
   onOpenPlan: () => void;
   onOpenNotifications: () => void;
+  onOpenApplications: () => void;
+  appStatuses: Record<string, ApplicationStatus>;
   onOpenMyOffer: (offer: MyOffer) => void;
   onPublish: () => void;
 };
@@ -141,8 +144,8 @@ export default function HomeScreen(props: Props) {
         <>
           <View style={styles.sectionRow}>
             <Text style={styles.section}>{t("home.sent")}</Text>
-            <Pressable onPress={props.onSearchOffers} hitSlop={8}>
-              <Text style={styles.link}>{t("home.searchOffers")}</Text>
+            <Pressable onPress={applied.length ? props.onOpenApplications : props.onSearchOffers} hitSlop={8}>
+              <Text style={styles.link}>{applied.length ? t("home.seeAllApps") : t("home.searchOffers")}</Text>
             </Pressable>
           </View>
           {applied.length === 0 ? (
@@ -155,9 +158,10 @@ export default function HomeScreen(props: Props) {
                     {offer.title}
                   </Text>
                   <Text style={styles.rowMeta} numberOfLines={1}>
-                    {offer.club} · {t("home.statusInReview")}
+                    {offer.club}
                   </Text>
                 </View>
+                <StatusPill status={props.appStatuses[offer.id] ?? "PENDING"} />
                 <Ionicons name="chevron-forward" size={18} color={COLORS.subtle} />
               </Pressable>
             ))

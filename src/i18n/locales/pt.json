@@ -613,5 +613,10 @@
   "apps.funnelTitle": "Como seus candidatos avançam",
   "apps.applicantsEmptyTitle": "Ainda não há candidatos",
   "apps.applicantsEmptyText": "Quando alguém se candidatar, você verá aqui. Uma oferta em destaque alcança mais gente.",
-  "apps.viewOffer": "Ver oferta"
+  "apps.viewOffer": "Ver oferta",
+  "myApps.title": "Minhas candidaturas",
+  "myApps.emptyTitle": "Você ainda não se candidatou",
+  "myApps.emptyText": "Quando você se candidatar a uma oferta, ela aparecerá aqui com o status.",
+  "myApps.noneInFilter": "Nenhuma candidatura com esse status.",
+  "home.seeAllApps": "Ver todas"
 }

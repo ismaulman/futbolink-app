@@ -19,6 +19,7 @@ import {
   INITIAL_FOLDERS,
   EMPTY_ORG,
   AppNotification,
+  ApplicationStatus,
   INITIAL_NOTIFICATIONS,
   INITIAL_PAGES,
   INITIAL_PLANS,
@@ -51,6 +52,7 @@ import CandidatesScreen from "./src/screens/CandidatesScreen";
 import FoldersScreen from "./src/screens/FoldersScreen";
 import MatchScreen from "./src/screens/MatchScreen";
 import HomeScreen from "./src/screens/HomeScreen";
+import MyApplicationsScreen from "./src/screens/MyApplicationsScreen";
 import NotificationsScreen from "./src/screens/NotificationsScreen";
 import OrgFormScreen from "./src/screens/OrgFormScreen";
 import OrgPageScreen from "./src/screens/OrgPageScreen";
@@ -77,12 +79,14 @@ export default function App() {
   const [tab, setTab] = useState<TabKey>("inicio");
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [appliedIds, setAppliedIds] = useState<string[]>([]);
+  // Estado de cada postulación (hoy "Postulado"; llega real con la plataforma conectada).
+  const [appStatuses] = useState<Record<string, ApplicationStatus>>({});
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [savedPlayerIds, setSavedPlayerIds] = useState<string[]>([]);
   const [proposalIds, setProposalIds] = useState<string[]>([]);
   const [overlay, setOverlay] = useState<
-    "edit" | "settings" | "messages" | "publish" | "candidates" | "folders" | "portfolio" | "match" | "plan" | "verification" | "pages" | "pageForm" | "pageDetail" | "notifications" | null
+    "edit" | "settings" | "messages" | "publish" | "candidates" | "folders" | "portfolio" | "match" | "plan" | "verification" | "pages" | "pageForm" | "pageDetail" | "notifications" | "applications" | null
   >(null);
   const [myOffers, setMyOffers] = useState<MyOffer[]>(INITIAL_MY_OFFERS);
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
@@ -480,6 +484,19 @@ export default function App() {
         }}
       />
     );
+  } else if (overlay === "applications") {
+    content = (
+      <MyApplicationsScreen
+        offers={allOffers.filter((o) => appliedIds.includes(o.id))}
+        statuses={appStatuses}
+        onOpenOffer={setSelectedOffer}
+        onSearchOffers={() => {
+          setOverlay(null);
+          changeTab("mercado");
+        }}
+        onBack={() => setOverlay(null)}
+      />
+    );
   } else if (overlay === "notifications") {
     content = (
       <NotificationsScreen
@@ -595,6 +612,8 @@ export default function App() {
         onEditProfile={() => setOverlay("edit")}
         onOpenPlan={() => setOverlay("plan")}
         onOpenNotifications={() => setOverlay("notifications")}
+        onOpenApplications={() => setOverlay("applications")}
+        appStatuses={appStatuses}
         onOpenMyOffer={openOfferCandidates}
         onPublish={() => setOverlay("publish")}
       />

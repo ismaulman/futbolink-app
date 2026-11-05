@@ -613,5 +613,10 @@
   "apps.funnelTitle": "How your applicants are moving",
   "apps.applicantsEmptyTitle": "No applicants yet",
   "apps.applicantsEmptyText": "When someone applies, you'll see them here. A featured offer reaches more people.",
-  "apps.viewOffer": "View offer"
+  "apps.viewOffer": "View offer",
+  "myApps.title": "My applications",
+  "myApps.emptyTitle": "You haven't applied yet",
+  "myApps.emptyText": "When you apply to an offer, you'll see it here with its status.",
+  "myApps.noneInFilter": "No applications with that status.",
+  "home.seeAllApps": "See all"
 }

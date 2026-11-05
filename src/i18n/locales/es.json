@@ -613,5 +613,10 @@
   "apps.funnelTitle": "Cómo avanzan tus postulantes",
   "apps.applicantsEmptyTitle": "Todavía no hay postulantes",
   "apps.applicantsEmptyText": "Cuando alguien se postule, lo vas a ver acá. Una oferta destacada llega a más gente.",
-  "apps.viewOffer": "Ver oferta"
+  "apps.viewOffer": "Ver oferta",
+  "myApps.title": "Mis postulaciones",
+  "myApps.emptyTitle": "Todavía no te postulaste",
+  "myApps.emptyText": "Cuando te postules a una oferta, la vas a ver acá con su estado.",
+  "myApps.noneInFilter": "No hay postulaciones con ese estado.",
+  "home.seeAllApps": "Ver todas"
 }
