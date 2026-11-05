@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import ChipGroup from "../components/ChipGroup";
 import Text from "../components/AppText";
+import CareerEditor from "../components/CareerEditor";
 import PositionField from "../components/PositionField";
 import Field from "../components/Field";
 import VideoList from "../components/VideoList";
@@ -99,6 +100,9 @@ export default function EditProfileScreen({ name, role, profile, onSave, onBack 
             onChangeText={(v) => update({ agencyName: v })}
           />
         )}
+
+        <Text style={[styles.section, styles.sectionGap]}>{t("career.title")}</Text>
+        <CareerEditor value={draft.career} onChange={(career) => update({ career })} />
 
         {isPlayer && (
           <>

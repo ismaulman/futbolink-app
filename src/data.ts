@@ -1,3 +1,4 @@
+import { CareerEntry } from "./career";
 // Datos de ejemplo. Más adelante esto se reemplaza por la API real.
 
 // Mismos tipos de registro que la web: Futbolista, Cuerpo técnico (staff, que
@@ -356,6 +357,7 @@ export const MOCK_PLAYERS: Player[] = [
 
 // Datos editables del perfil (mismos campos que la entidad User de la plataforma).
 export type Profile = {
+  career: CareerEntry[];
   nationality: string;
   location: string;
   position: string; // primaryPosition
@@ -371,6 +373,11 @@ export type Profile = {
 };
 
 export const INITIAL_PROFILE: Profile = {
+  career: [
+    { id: "c1", club: "Club Deportivo Norte", country: "Argentina", league: "Liga regional", start: "07/2024", end: "06/2025", category: "Primera" },
+    { id: "c2", club: "Atlético Juvenil", country: "Argentina", league: "", start: "07/2022", end: "06/2024", category: "Reserva" },
+    { id: "c3", club: "Academia FutboLink", country: "Argentina", league: "Formativas", start: "01/2020", end: "06/2022", category: "U20" },
+  ],
   nationality: "Argentina",
   location: "Roma, Italia",
   position: "Mediocampista Central",
@@ -401,12 +408,6 @@ export const MY_PROFILE = {
   verified: true,
   views: 1284,
   videoPlays: 342,
-  club: "", // vacío = sin club (se muestra profile.noClub)
-  career: [
-    { year: "2024 – 2025", club: "Club Deportivo Norte", detail: "Liga regional" },
-    { year: "2022 – 2024", club: "Atlético Juvenil", detail: "Categoría Reserva" },
-    { year: "2020 – 2022", club: "Academia FutboLink", detail: "Formativas" },
-  ],
 };
 
 // ---------- Mensajes y propuestas (forma alineada con message-thread.entity.ts)

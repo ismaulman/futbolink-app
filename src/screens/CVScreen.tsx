@@ -5,7 +5,8 @@ import { useTranslation } from "react-i18next";
 import Text from "../components/AppText";
 import PositionPitch from "../components/PositionPitch";
 import ScreenHeader from "../components/ScreenHeader";
-import { MY_PROFILE, Profile, User } from "../data";
+import { sortCareer } from "../career";
+import { Profile, User } from "../data";
 import { COLORS, RADIUS } from "../theme";
 
 const LANGS = ["es", "en", "it", "pt"] as const;
@@ -127,13 +128,16 @@ export default function CVScreen({ user, profile, verified, onBack }: Props) {
           )}
 
           <Text style={styles.section}>{L("cv.career")}</Text>
-          {MY_PROFILE.career.map((item) => (
-            <View key={item.year} style={styles.careerRow}>
+          {sortCareer(profile.career).map((item) => (
+            <View key={item.id} style={styles.careerRow}>
               <View style={styles.dot} />
               <View style={styles.headBody}>
                 <Text style={styles.rowValueLeft}>{item.club}</Text>
                 <Text style={styles.rowLabel}>
-                  {item.year} · {item.detail}
+                  {[item.country, item.league, item.category].filter(Boolean).join(" · ")}
+                </Text>
+                <Text style={styles.rowLabel}>
+                  {item.start} – {item.end || L("career.present")}
                 </Text>
               </View>
             </View>
