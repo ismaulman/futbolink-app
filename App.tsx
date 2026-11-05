@@ -52,6 +52,7 @@ import CandidatesScreen from "./src/screens/CandidatesScreen";
 import FoldersScreen from "./src/screens/FoldersScreen";
 import MatchScreen from "./src/screens/MatchScreen";
 import HomeScreen from "./src/screens/HomeScreen";
+import HelpScreen from "./src/screens/HelpScreen";
 import MyApplicationsScreen from "./src/screens/MyApplicationsScreen";
 import NotificationsScreen from "./src/screens/NotificationsScreen";
 import OrgFormScreen from "./src/screens/OrgFormScreen";
@@ -86,7 +87,7 @@ export default function App() {
   const [savedPlayerIds, setSavedPlayerIds] = useState<string[]>([]);
   const [proposalIds, setProposalIds] = useState<string[]>([]);
   const [overlay, setOverlay] = useState<
-    "edit" | "settings" | "messages" | "publish" | "candidates" | "folders" | "portfolio" | "match" | "plan" | "verification" | "pages" | "pageForm" | "pageDetail" | "notifications" | "applications" | null
+    "edit" | "settings" | "messages" | "publish" | "candidates" | "folders" | "portfolio" | "match" | "plan" | "verification" | "pages" | "pageForm" | "pageDetail" | "notifications" | "applications" | "help" | null
   >(null);
   const [myOffers, setMyOffers] = useState<MyOffer[]>(INITIAL_MY_OFFERS);
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
@@ -484,6 +485,8 @@ export default function App() {
         }}
       />
     );
+  } else if (overlay === "help") {
+    content = <HelpScreen onBack={() => setOverlay("settings")} />;
   } else if (overlay === "applications") {
     content = (
       <MyApplicationsScreen
@@ -580,6 +583,7 @@ export default function App() {
         onPrefsChange={setPrefs}
         verification={verification}
         onOpenPlan={() => setOverlay("plan")}
+        onOpenHelp={() => setOverlay("help")}
         onOpenVerification={() => setOverlay("verification")}
         onLogout={logout}
         onBack={() => setOverlay(null)}

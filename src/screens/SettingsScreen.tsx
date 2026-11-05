@@ -15,6 +15,7 @@ type Props = {
   verification: VerificationStatus;
   onOpenPlan: () => void;
   onOpenVerification: () => void;
+  onOpenHelp: () => void;
   onLogout: () => void;
   onBack: () => void;
 };
@@ -74,6 +75,7 @@ export default function SettingsScreen({
   verification,
   onOpenPlan,
   onOpenVerification,
+  onOpenHelp,
   onLogout,
   onBack,
 }: Props) {
@@ -128,7 +130,7 @@ export default function SettingsScreen({
           detail={t(`verify.status_${verification}`)}
           onPress={onOpenVerification}
         />
-        <LinkRow icon="help-circle-outline" label={t("settings.help")} />
+        <LinkRow icon="help-circle-outline" label={t("settings.help")} onPress={onOpenHelp} />
         <LinkRow icon="document-text-outline" label={t("settings.terms")} />
 
         <Pressable
