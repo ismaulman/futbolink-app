@@ -680,5 +680,13 @@
   "help.safety.4.q": "How can I contact support?",
   "help.safety.4.a": "If you need help, you can reach our team through the Contact section.",
   "help.safety.5.q": "How do I report a profile or content?",
-  "help.safety.5.a": "If you find a profile or content you'd like to report, you can reach our team from the Contact section. Let us know which profile or content you'd like to report and briefly explain the reason for the report."
+  "help.safety.5.a": "If you find a profile or content you'd like to report, you can reach our team from the Contact section. Let us know which profile or content you'd like to report and briefly explain the reason for the report.",
+  "success.kicker": "Success stories",
+  "success.title": "Players and professionals who found their opportunity",
+  "success.subtitle": "Real stories from people who found their next club through FutboLink.",
+  "success.badge": "Real story",
+  "success.eyebrow": "Success story",
+  "success.view": "View success story",
+  "success.prev": "Previous story",
+  "success.next": "Next story"
 }

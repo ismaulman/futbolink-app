@@ -680,5 +680,13 @@
   "help.safety.4.q": "¿Cómo puedo contactar con soporte?",
   "help.safety.4.a": "Si necesitás ayuda, podés comunicarte con nuestro equipo a través de la sección Contacto.",
   "help.safety.5.q": "¿Cómo reporto un perfil o contenido?",
-  "help.safety.5.a": "Si encontrás un perfil o contenido que quieras reportar, podés comunicarte con nuestro equipo desde la sección Contacto. Indicá el perfil o contenido que querés reportar y explicanos brevemente el motivo del reporte."
+  "help.safety.5.a": "Si encontrás un perfil o contenido que quieras reportar, podés comunicarte con nuestro equipo desde la sección Contacto. Indicá el perfil o contenido que querés reportar y explicanos brevemente el motivo del reporte.",
+  "success.kicker": "Casos de éxito",
+  "success.title": "Jugadores y profesionales que consiguieron su oportunidad",
+  "success.subtitle": "Historias reales de personas que encontraron su próximo club a través de FutboLink.",
+  "success.badge": "Historia real",
+  "success.eyebrow": "Caso de éxito",
+  "success.view": "Ver caso de éxito",
+  "success.prev": "Historia anterior",
+  "success.next": "Historia siguiente"
 }

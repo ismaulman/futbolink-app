@@ -680,5 +680,13 @@
   "help.safety.4.q": "Come posso contattare l'assistenza?",
   "help.safety.4.a": "Se hai bisogno di aiuto, puoi metterti in contatto con il nostro team attraverso la sezione Contatto.",
   "help.safety.5.q": "Come segnalo un profilo o un contenuto?",
-  "help.safety.5.a": "Se trovi un profilo o un contenuto che vuoi segnalare, puoi metterti in contatto con il nostro team dalla sezione Contatto. Indica il profilo o il contenuto che vuoi segnalare e spiegaci brevemente il motivo della segnalazione."
+  "help.safety.5.a": "Se trovi un profilo o un contenuto che vuoi segnalare, puoi metterti in contatto con il nostro team dalla sezione Contatto. Indica il profilo o il contenuto che vuoi segnalare e spiegaci brevemente il motivo della segnalazione.",
+  "success.kicker": "Storie di successo",
+  "success.title": "Giocatori e professionisti che hanno trovato la loro opportunità",
+  "success.subtitle": "Storie vere di persone che hanno trovato il loro prossimo club grazie a FutboLink.",
+  "success.badge": "Storia vera",
+  "success.eyebrow": "Caso di successo",
+  "success.view": "Vedi il caso di successo",
+  "success.prev": "Storia precedente",
+  "success.next": "Storia successiva"
 }

@@ -23,6 +23,7 @@ type Props = {
   onSearchOffers: () => void;
   onEditProfile: () => void;
   onOpenPlan: () => void;
+  onOpenSuccess: () => void;
   onOpenNotifications: () => void;
   onOpenApplications: () => void;
   appStatuses: Record<string, ApplicationStatus>;
@@ -185,6 +186,16 @@ export default function HomeScreen(props: Props) {
           <View>
             <Text style={styles.cardHint}>{t("plan.title")}</Text>
             <Text style={styles.cardTitle}>{planName}</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={COLORS.subtle} />
+        </View>
+      </Pressable>
+
+      <Pressable onPress={props.onOpenSuccess} style={[styles.card, styles.planCard]}>
+        <View style={styles.cardTop}>
+          <View>
+            <Text style={styles.cardHint}>{t("success.badge")}</Text>
+            <Text style={styles.cardTitle}>{t("success.kicker")}</Text>
           </View>
           <Ionicons name="chevron-forward" size={18} color={COLORS.subtle} />
         </View>
