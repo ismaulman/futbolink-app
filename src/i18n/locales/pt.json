@@ -808,5 +808,12 @@
   "rep.agentsTitle": "Agências e agentes",
   "rep.inviteBody": "Quer representar você. Você pode aceitar ou recusar.",
   "rep.open": "Representação",
-  "rep.openDesc": "Peça a uma agência ou agente para representar você"
+  "rep.openDesc": "Peça a uma agência ou agente para representar você",
+  "publish.duplicateTitle": "Duplicar uma vaga",
+  "publish.duplicateDesc": "Reaproveite os campos de uma vaga sua e edite se for necessário.",
+  "publish.duplicateEmpty": "Você ainda não tem vagas para duplicar.",
+  "publish.duplicateUse": "Usar",
+  "publish.editTitle": "Editar vaga",
+  "publish.saveChanges": "Salvar alterações",
+  "apps.editOffer": "Editar vaga"
 }

@@ -54,6 +54,7 @@ import MatchScreen from "./src/screens/MatchScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import { INITIAL_REP_REQUESTS, RepRequest } from "./src/representation";
 import RepresentationScreen from "./src/screens/RepresentationScreen";
+import { OfferDraft, offerToDraft } from "./src/offerDraft";
 import CVScreen from "./src/screens/CVScreen";
 import SuccessCasesScreen from "./src/screens/SuccessCasesScreen";
 import { JobAlert } from "./src/forYou";
@@ -84,6 +85,7 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [tab, setTab] = useState<TabKey>("inicio");
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
+  const [editingOfferId, setEditingOfferId] = useState<string | null>(null);
   const [repRequests, setRepRequests] = useState<RepRequest[]>(INITIAL_REP_REQUESTS);
   const [repAgentId, setRepAgentId] = useState<string | null>(null);
   const [customAlerts, setCustomAlerts] = useState<JobAlert[]>([]);
@@ -376,47 +378,67 @@ export default function App() {
       />
     );
   } else if (overlay === "publish") {
+    const buildOffer = (id: string, draft: OfferDraft): Offer => {
+      const knownFlag = MOCK_OFFERS.find((o) => o.country === draft.country.trim())?.flag;
+      const ownPage = pages.find((p) => p.status === "APPROVED");
+      const title = draft.title.trim() || `${tc(draft.position)} – ${tc(draft.category)}`;
+      return {
+        id,
+        type: draft.type,
+        flag: knownFlag ?? "🌍",
+        country: draft.country.trim(),
+        region: [draft.city.trim(), draft.country.trim()].filter(Boolean).join(", "),
+        club: ownPage?.name ?? user.name,
+        league: "",
+        title,
+        salary: draft.salary ? `${draft.currency}${draft.salary}` : "",
+        postedHoursAgo: 0,
+        description: draft.description.trim(),
+        positions: [draft.position],
+        category: draft.category,
+        sportGenres: draft.genre,
+        contractDuration: draft.contract,
+        minExperience: "",
+        minAge: draft.minAge ? parseInt(draft.minAge, 10) : null,
+        maxAge: draft.maxAge ? parseInt(draft.maxAge, 10) : null,
+        euPassport: "No",
+        availabilityToTravel: "No",
+        extras: draft.extras,
+        requirements: [],
+      };
+    };
+    const editing = editingOfferId ? myOffers.find((o) => o.id === editingOfferId) : undefined;
     content = (
       <PublishOfferScreen
-        onBack={() => setOverlay(null)}
+        onBack={() => {
+          setOverlay(editing ? "candidates" : null);
+          setEditingOfferId(null);
+        }}
+        initial={editing ? offerToDraft(publishedOffers.find((o) => o.id === editing.id), editing) : undefined}
+        reusable={myOffers.map((m) => ({
+          id: m.id,
+          title: m.title,
+          draft: offerToDraft(publishedOffers.find((o) => o.id === m.id), m),
+        }))}
         onPublish={(draft) => {
-          const fallback = `${tc(draft.position)} – ${tc(draft.category)}`;
-          const title = draft.title.trim() || fallback;
+          if (editing) {
+            const updated = buildOffer(editing.id, draft);
+            setMyOffers((c) => c.map((o) => (o.id === editing.id ? { ...o, type: draft.type, title: updated.title } : o)));
+            setPublishedOffers((c) =>
+              c.map((o) => (o.id === editing.id ? { ...updated, postedHoursAgo: o.postedHoursAgo } : o)),
+            );
+            setEditingOfferId(null);
+            setOverlay("candidates");
+            return;
+          }
           const id = `mo${Date.now()}`;
-          const knownFlag = MOCK_OFFERS.find((o) => o.country === draft.country.trim())?.flag;
-          const ownPage = pages.find((p) => p.status === "APPROVED");
+          const offer = buildOffer(id, draft);
           setMyOffers((current) => [
-            { id, type: draft.type, title, status: "ACTIVE", postedHoursAgo: 0, candidates: [] },
+            { id, type: draft.type, title: offer.title, status: "ACTIVE", postedHoursAgo: 0, candidates: [] },
             ...current,
           ]);
           // En la plataforma la revisa el equipo antes de mostrarla; acá se aprueba al instante.
-          setPublishedOffers((current) => [
-            {
-              id,
-              type: draft.type,
-              flag: knownFlag ?? "🌍",
-              country: draft.country.trim(),
-              region: [draft.city.trim(), draft.country.trim()].filter(Boolean).join(", "),
-              club: ownPage?.name ?? user.name,
-              league: "",
-              title,
-              salary: draft.salary ? `${draft.currency}${draft.salary}` : "",
-              postedHoursAgo: 0,
-              description: draft.description.trim(),
-              positions: [draft.position],
-              category: draft.category,
-              sportGenres: draft.genre,
-              contractDuration: draft.contract,
-              minExperience: "",
-              minAge: draft.minAge ? parseInt(draft.minAge, 10) : null,
-              maxAge: draft.maxAge ? parseInt(draft.maxAge, 10) : null,
-              euPassport: "No",
-              availabilityToTravel: "No",
-              extras: draft.extras,
-              requirements: [],
-            },
-            ...current,
-          ]);
+          setPublishedOffers((current) => [offer, ...current]);
           setOverlay(null);
           setTab("panel");
         }}
@@ -440,6 +462,10 @@ export default function App() {
         onOpenOffer={(offer) => {
           setOverlay(null);
           setSelectedOffer(offer);
+        }}
+        onEditOffer={() => {
+          setEditingOfferId(activeOfferId);
+          setOverlay("publish");
         }}
         onBack={() => setOverlay(null)}
       />

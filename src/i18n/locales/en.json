@@ -808,5 +808,12 @@
   "rep.agentsTitle": "Agencies and agents",
   "rep.inviteBody": "They'd like to represent you. You can accept or decline.",
   "rep.open": "Representation",
-  "rep.openDesc": "Ask an agency or agent to represent you"
+  "rep.openDesc": "Ask an agency or agent to represent you",
+  "publish.duplicateTitle": "Duplicate an offer",
+  "publish.duplicateDesc": "Reuse the fields from one of your offers and edit them if needed.",
+  "publish.duplicateEmpty": "You do not have any offers to duplicate yet.",
+  "publish.duplicateUse": "Use",
+  "publish.editTitle": "Edit offer",
+  "publish.saveChanges": "Save changes",
+  "apps.editOffer": "Edit offer"
 }

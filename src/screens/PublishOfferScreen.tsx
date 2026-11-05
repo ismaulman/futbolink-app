@@ -15,51 +15,25 @@ import {
   STAFF_ROLES,
 } from "../data";
 import { tc } from "../i18n";
+import { EMPTY_DRAFT, OfferDraft } from "../offerDraft";
 import { COLORS, RADIUS } from "../theme";
 
-export type OfferDraft = {
-  type: OfferType;
-  position: string;
-  title: string;
-  country: string;
-  city: string;
-  category: string;
-  genre: string;
-  salary: string;
-  currency: string;
-  contract: string;
-  minAge: string;
-  maxAge: string;
-  description: string;
-  extras: string[];
-};
+export type { OfferDraft };
 
 type Props = {
   onPublish: (draft: OfferDraft) => void;
   onBack: () => void;
+  initial?: OfferDraft; // editar una oferta existente
+  reusable?: { id: string; title: string; draft: OfferDraft }[]; // ofertas propias para duplicar
 };
 
 const digits = (v: string) => v.replace(/[^0-9]/g, "").slice(0, 2);
 
-export default function PublishOfferScreen({ onPublish, onBack }: Props) {
+export default function PublishOfferScreen({ onPublish, onBack, initial, reusable = [] }: Props) {
   const { t } = useTranslation();
-  const [draft, setDraft] = useState<OfferDraft>({
-    type: "player",
-    position: "",
-    title: "",
-    country: "",
-    city: "",
-    category: "Semiprofesional",
-    genre: "Masculino",
-    salary: "",
-    currency: "€",
-    contract: "",
-    minAge: "",
-    maxAge: "",
-    description: "",
-    extras: [],
-  });
-  const [errors, setErrors] = useState<{ position?: boolean; country?: boolean }>({});
+  const editing = !!initial;
+  const [draft, setDraft] = useState<OfferDraft>(initial ?? EMPTY_DRAFT);
+  const [pickOpen, setPickOpen] = useState(false);  const [errors, setErrors] = useState<{ position?: boolean; country?: boolean }>({});
 
   const update = (patch: Partial<OfferDraft>) => setDraft((d) => ({ ...d, ...patch }));
   const positionOptions = (draft.type === "player"
@@ -83,12 +57,41 @@ export default function PublishOfferScreen({ onPublish, onBack }: Props) {
 
   return (
     <View style={styles.screen}>
-      <ScreenHeader title={t("publish.title")} onBack={onBack} />
+      <ScreenHeader title={editing ? t("publish.editTitle") : t("publish.title")} onBack={onBack} />
       <ScrollView
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
+        {!editing && (
+          <View style={styles.reuse}>
+            <Pressable onPress={() => setPickOpen((v) => !v)}>
+              <Text style={styles.reuseTitle}>{t("publish.duplicateTitle")}</Text>
+              <Text style={styles.reuseDesc}>{t("publish.duplicateDesc")}</Text>
+            </Pressable>
+            {pickOpen &&
+              (reusable.length === 0 ? (
+                <Text style={styles.reuseDesc}>{t("publish.duplicateEmpty")}</Text>
+              ) : (
+                reusable.map((r) => (
+                  <View key={r.id} style={styles.reuseRow}>
+                    <Text style={styles.reuseName} numberOfLines={1}>
+                      {r.title}
+                    </Text>
+                    <Pressable
+                      onPress={() => {
+                        setDraft(r.draft);
+                        setPickOpen(false);
+                      }}
+                      hitSlop={8}
+                    >
+                      <Text style={styles.reuseUse}>{t("publish.duplicateUse")}</Text>
+                    </Pressable>
+                  </View>
+                ))
+              ))}
+          </View>
+        )}
         <ChipGroup
           label=""
           options={[
@@ -208,7 +211,7 @@ export default function PublishOfferScreen({ onPublish, onBack }: Props) {
           })}
         </View>
 
-        <Text style={styles.hint}>{t("publish.hint")}</Text>
+        {!editing && <Text style={styles.hint}>{t("publish.hint")}</Text>}
       </ScrollView>
 
       <View style={styles.footer}>
@@ -216,7 +219,7 @@ export default function PublishOfferScreen({ onPublish, onBack }: Props) {
           onPress={submit}
           style={({ pressed }) => [styles.submit, pressed && { opacity: 0.85 }]}
         >
-          <Text style={styles.submitText}>{t("publish.submit")}</Text>
+          <Text style={styles.submitText}>{editing ? t("publish.saveChanges") : t("publish.submit")}</Text>
         </Pressable>
       </View>
     </View>
@@ -225,6 +228,12 @@ export default function PublishOfferScreen({ onPublish, onBack }: Props) {
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
+  reuse: { padding: 14, borderRadius: RADIUS.md, borderWidth: 1, borderColor: COLORS.border, marginBottom: 16 },
+  reuseTitle: { fontSize: 14, fontWeight: "500", color: COLORS.ink },
+  reuseDesc: { fontSize: 12, color: COLORS.muted, marginTop: 2 },
+  reuseRow: { flexDirection: "row", alignItems: "center", gap: 12, paddingTop: 12, marginTop: 10, borderTopWidth: 1, borderTopColor: COLORS.divider },
+  reuseName: { flex: 1, fontSize: 14, color: COLORS.ink },
+  reuseUse: { fontSize: 13, fontWeight: "500", color: COLORS.primaryDark },
   content: { padding: 16, paddingBottom: 24 },
   twoCols: { flexDirection: "row", gap: 12 },
   col: { flex: 1 },

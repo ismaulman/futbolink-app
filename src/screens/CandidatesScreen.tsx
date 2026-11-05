@@ -28,6 +28,7 @@ type Props = {
   onToggle: (playerId: string, field: "interested" | "shortlisted") => void;
   onRequestRepresentation: (playerId: string) => void;
   onOpenOffer: (offer: Offer) => void;
+  onEditOffer: () => void;
   onBack: () => void;
 };
 
@@ -74,6 +75,7 @@ export default function CandidatesScreen({
   onToggle,
   onRequestRepresentation,
   onOpenOffer,
+  onEditOffer,
   onBack,
 }: Props) {
   const { t } = useTranslation();
@@ -115,11 +117,16 @@ export default function CandidatesScreen({
       <ScreenHeader title={t("apps.applicantsKicker")} onBack={onBack} />
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <Text style={styles.offerTitle}>{offer.title}</Text>
-        {offerDetail && (
-          <Pressable onPress={() => onOpenOffer(offerDetail)} hitSlop={8}>
-            <Text style={styles.link}>{t("apps.viewOffer")}</Text>
+        <View style={styles.offerActions}>
+          {offerDetail && (
+            <Pressable onPress={() => onOpenOffer(offerDetail)} hitSlop={8}>
+              <Text style={styles.link}>{t("apps.viewOffer")}</Text>
+            </Pressable>
+          )}
+          <Pressable onPress={onEditOffer} hitSlop={8}>
+            <Text style={styles.link}>{t("apps.editOffer")}</Text>
           </Pressable>
-        )}
+        </View>
 
         <View style={styles.tiles}>
           <Tile label={t("apps.applicantsKicker")} value={total} accent />
@@ -283,6 +290,7 @@ export default function CandidatesScreen({
 }
 
 const styles = StyleSheet.create({
+  offerActions: { flexDirection: "row", gap: 18 },
   screen: { flex: 1, backgroundColor: COLORS.background },
   content: { padding: 16, paddingBottom: 40 },
   offerTitle: { fontSize: 20, fontWeight: "500", color: COLORS.ink, lineHeight: 26 },
