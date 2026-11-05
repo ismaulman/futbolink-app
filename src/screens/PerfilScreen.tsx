@@ -16,6 +16,7 @@ type Props = {
   verified?: boolean;
   onVerify?: () => void;
   onOpenPages?: () => void;
+  onOpenCV?: () => void;
 };
 
 function Stat({ value, label }: { value: string; label: string }) {
@@ -38,7 +39,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 // Perfil estilo Instagram/LinkedIn: avatar + números arriba, datos en listas
 // planas con divisores finos, sin cajas ni negritas pesadas.
-export default function PerfilScreen({ user, profile, appliedCount, onEdit, onSettings, verified, onVerify, onOpenPages }: Props) {
+export default function PerfilScreen({ user, profile, appliedCount, onEdit, onSettings, verified, onVerify, onOpenPages, onOpenCV }: Props) {
   const { t } = useTranslation();
   const initials = user.name
     .split(" ")
@@ -102,6 +103,17 @@ export default function PerfilScreen({ user, profile, appliedCount, onEdit, onSe
           <Text style={styles.actionText}>{t("profile.verify")}</Text>
         </Pressable>
       </View>
+
+      {onOpenCV && (
+        <Pressable onPress={onOpenCV} style={({ pressed }) => [styles.pagesRow, pressed && styles.pressed]}>
+          <Ionicons name="document-text-outline" size={20} color={COLORS.ink} />
+          <View style={styles.pagesBody}>
+            <Text style={styles.pagesTitle}>{t("cv.open")}</Text>
+            <Text style={styles.pagesSub}>{t("cv.openDesc")}</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={COLORS.subtle} />
+        </Pressable>
+      )}
 
       {onOpenPages && (
         <Pressable onPress={onOpenPages} style={({ pressed }) => [styles.pagesRow, pressed && styles.pressed]}>
