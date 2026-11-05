@@ -5,12 +5,14 @@ import { useTranslation } from "react-i18next";
 import Text from "../components/AppText";
 import ChipGroup from "../components/ChipGroup";
 import OfferCard from "../components/OfferCard";
-import { Offer } from "../data";
+import AlertsCard from "../components/AlertsCard";
+import { Offer, POSITIONS, Profile, STAFF_ROLES, User } from "../data";
+import { forYou, JobAlert, PUESTO_TO_ROLE, Reason, residenceCountry } from "../forYou";
 import { tc } from "../i18n";
 import { COLORS, RADIUS } from "../theme";
 
 type Filter = "all" | "player" | "staff";
-type View_ = "offers" | "saved" | "applied";
+type View_ = "forYou" | "offers" | "saved" | "applied";
 
 const TYPE_FILTERS: { key: Filter; label: string }[] = [
   { key: "all", label: "common.all" },
@@ -19,6 +21,7 @@ const TYPE_FILTERS: { key: Filter; label: string }[] = [
 ];
 
 const VIEWS: { key: View_; label: string }[] = [
+  { key: "forYou", label: "forYou.tabForYou" },
   { key: "offers", label: "market.tabOffers" },
   { key: "saved", label: "market.tabSaved" },
   { key: "applied", label: "market.tabApplied" },
@@ -34,6 +37,11 @@ type Props = {
   onOpenOffer: (offer: Offer) => void;
   onApply: (offerId: string) => void;
   onToggleSave: (offerId: string) => void;
+  user: User;
+  profile: Profile;
+  customAlerts: JobAlert[];
+  onAlertsChange: (alerts: JobAlert[]) => void;
+  onEditProfile: () => void;
 };
 
 export default function MercadoScreen({
@@ -43,9 +51,15 @@ export default function MercadoScreen({
   onOpenOffer,
   onApply,
   onToggleSave,
+  user,
+  profile,
+  customAlerts,
+  onAlertsChange,
+  onEditProfile,
 }: Props) {
   const { t } = useTranslation();
-  const [view, setView] = useState<View_>("offers");
+  const isSeeker = user.role !== "agency";
+  const [view, setView] = useState<View_>(isSeeker ? "forYou" : "offers");
   const [type, setType] = useState<Filter>("all");
   const [showFilters, setShowFilters] = useState(false);
   const [country, setCountry] = useState(ALL);
@@ -56,9 +70,28 @@ export default function MercadoScreen({
   const categories = useMemo(() => unique(allOffers.map((o) => o.category)), [allOffers]);
   const positions = useMemo(() => unique(allOffers.flatMap((o) => o.positions)), [allOffers]);
 
+  // "Para vos": afinidad con el perfil (jugador: posición; staff: su puesto).
+  const isStaff = user.role === "staff";
+  const ownPosition = isStaff ? (user.puesto ? (PUESTO_TO_ROLE[user.puesto] ?? "") : "") : profile.position;
+  const secondary = isStaff ? "" : profile.secondaryPosition;
+  const residence = residenceCountry(profile);
+  const feed = useMemo(
+    () => forYou(allOffers, ownPosition, secondary, residence),
+    [allOffers, ownPosition, secondary, residence],
+  );
+  const alerts: JobAlert[] = [
+    ...(ownPosition ? [{ id: "auto", kind: "AUTO" as const, position: ownPosition, country: residence || null }] : []),
+    ...customAlerts,
+  ];
+  const reasonText = (reasons: Reason[]) =>
+    reasons
+      .filter((r) => r !== "recent")
+      .map((r) => t(`forYou.reason${r === "position" ? "Position" : r === "secondaryPosition" ? "SecondaryPosition" : "Country"}`).toLowerCase())
+      .join(t("forYou.and"));
+
   const activeFilters = [country, category, position].filter((v) => v !== ALL).length;
 
-  const offers = allOffers.filter((offer) => {
+  const offers = view === "forYou" ? feed.items.map((i) => i.offer) : allOffers.filter((offer) => {
     if (view === "saved" && !savedIds.includes(offer.id)) return false;
     if (view === "applied" && !appliedIds.includes(offer.id)) return false;
     if (type !== "all" && offer.type !== type) return false;
@@ -80,7 +113,9 @@ export default function MercadoScreen({
   ];
 
   const emptyText =
-    view === "saved"
+    view === "forYou"
+      ? t("forYou.emptyTitle")
+      : view === "saved"
       ? t("market.emptySaved")
       : view === "applied"
         ? t("market.emptyApplied")
@@ -108,7 +143,7 @@ export default function MercadoScreen({
           })}
         </View>
 
-        <View style={styles.filtersRow}>
+        {view !== "forYou" && <View style={styles.filtersRow}>
           {TYPE_FILTERS.map((item) => {
             const active = type === item.key;
             return (
@@ -137,9 +172,9 @@ export default function MercadoScreen({
               {activeFilters > 0 ? ` (${activeFilters})` : ""}
             </Text>
           </Pressable>
-        </View>
+        </View>}
 
-        {showFilters && (
+        {view !== "forYou" && showFilters && (
           <View style={styles.panel}>
             <ChipGroup
               label={t("market.country")}
@@ -183,8 +218,40 @@ export default function MercadoScreen({
             onOpen={() => onOpenOffer(item)}
             onApply={() => onApply(item.id)}
             onToggleSave={() => onToggleSave(item.id)}
+            why={
+              view === "forYou" && !feed.fallback
+                ? `${t("forYou.whyShown")} ${reasonText(feed.items.find((i) => i.offer.id === item.id)?.reasons ?? [])}`
+                : undefined
+            }
           />
         )}
+        ListHeaderComponent={
+          view === "forYou" ? (
+            <View>
+              {!ownPosition && (
+                <View style={styles.banner}>
+                  <Text style={styles.bannerText}>{t("forYou.completeProfile")}</Text>
+                  <Pressable onPress={onEditProfile} hitSlop={8}>
+                    <Text style={styles.bannerLink}>{t("forYou.completeProfileCta")}</Text>
+                  </Pressable>
+                </View>
+              )}
+              {!!ownPosition && feed.fallback && feed.items.length > 0 && (
+                <View style={styles.banner}>
+                  <Text style={styles.bannerText}>{t("forYou.fallbackNote")}</Text>
+                </View>
+              )}
+              <AlertsCard
+                alerts={alerts}
+                offers={allOffers}
+                positionOptions={isStaff ? STAFF_ROLES : POSITIONS.filter((p) => p !== "Todas")}
+                countryOptions={countries}
+                defaultCountry={residence}
+                onChange={(next) => onAlertsChange(next.filter((a) => a.kind === "CUSTOM"))}
+              />
+            </View>
+          ) : null
+        }
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={<Text style={styles.empty}>{emptyText}</Text>}
@@ -195,6 +262,9 @@ export default function MercadoScreen({
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
+  banner: { padding: 14, marginBottom: 12, borderRadius: RADIUS.md, borderWidth: 1, borderColor: COLORS.primaryBorder, backgroundColor: COLORS.primarySoft },
+  bannerText: { fontSize: 13, color: COLORS.ink, lineHeight: 19 },
+  bannerLink: { fontSize: 13, fontWeight: "500", color: COLORS.primaryDark, marginTop: 8 },
   header: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
   heading: { fontSize: 22, fontWeight: "500", color: COLORS.ink },
   views: {

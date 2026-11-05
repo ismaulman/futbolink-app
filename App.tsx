@@ -54,6 +54,7 @@ import MatchScreen from "./src/screens/MatchScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import CVScreen from "./src/screens/CVScreen";
 import SuccessCasesScreen from "./src/screens/SuccessCasesScreen";
+import { JobAlert } from "./src/forYou";
 import HelpScreen from "./src/screens/HelpScreen";
 import MyApplicationsScreen from "./src/screens/MyApplicationsScreen";
 import NotificationsScreen from "./src/screens/NotificationsScreen";
@@ -81,6 +82,7 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [tab, setTab] = useState<TabKey>("inicio");
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
+  const [customAlerts, setCustomAlerts] = useState<JobAlert[]>([]);
   const [appliedIds, setAppliedIds] = useState<string[]>([]);
   // Estado de cada postulación (hoy "Postulado"; llega real con la plataforma conectada).
   const [appStatuses] = useState<Record<string, ApplicationStatus>>({});
@@ -638,6 +640,11 @@ export default function App() {
         onOpenOffer={setSelectedOffer}
         onApply={apply}
         onToggleSave={toggleSave}
+        user={user}
+        profile={profile}
+        customAlerts={customAlerts}
+        onAlertsChange={setCustomAlerts}
+        onEditProfile={() => setOverlay("edit")}
       />
     );
   } else if (tab === "panel" && user.role !== "player") {

@@ -14,11 +14,12 @@ type Props = {
   onApply: () => void;
   saved: boolean;
   onToggleSave: () => void;
+  why?: string; // "Por qué te la mostramos"
 };
 
 // Tarjeta plana tipo LinkedIn: toda la tarjeta abre la oferta y la acción
 // secundaria es un link de texto (el botón verde lleno queda para el detalle).
-export default function OfferCard({ offer, applied, onOpen, onApply, saved, onToggleSave }: Props) {
+export default function OfferCard({ offer, applied, onOpen, onApply, saved, onToggleSave, why }: Props) {
   const { t } = useTranslation();
   return (
     <Pressable
@@ -49,6 +50,8 @@ export default function OfferCard({ offer, applied, onOpen, onApply, saved, onTo
         {offer.salary} · {tc(offer.category)}
       </Text>
 
+      {!!why && <Text style={styles.why}>{why}</Text>}
+
       <View style={styles.footer}>
         <Text style={styles.posted}>{timeAgo(t, offer.postedHoursAgo)}</Text>
         <Pressable onPress={onApply} disabled={applied} hitSlop={10}>
@@ -67,6 +70,7 @@ export default function OfferCard({ offer, applied, onOpen, onApply, saved, onTo
 }
 
 const styles = StyleSheet.create({
+  why: { fontSize: 12, color: COLORS.primaryDark, marginTop: 6 },
   card: {
     backgroundColor: COLORS.white,
     borderRadius: RADIUS.md,

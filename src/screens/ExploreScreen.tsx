@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import Text from "../components/AppText";
-import { Offer } from "../data";
+import { Offer, Profile, User } from "../data";
+import { JobAlert } from "../forYou";
 import { COLORS } from "../theme";
 import FichajesScreen from "./FichajesScreen";
 import MercadoScreen from "./MercadoScreen";
@@ -19,6 +20,11 @@ type Props = {
   onOpenOffer: (offer: Offer) => void;
   onApply: (offerId: string) => void;
   onToggleSave: (offerId: string) => void;
+  user: User;
+  profile: Profile;
+  customAlerts: JobAlert[];
+  onAlertsChange: (alerts: JobAlert[]) => void;
+  onEditProfile: () => void;
 };
 
 // Pestaña Mercado: ofertas, fichajes, mercado por país y noticias.
