@@ -52,6 +52,8 @@ import CandidatesScreen from "./src/screens/CandidatesScreen";
 import FoldersScreen from "./src/screens/FoldersScreen";
 import MatchScreen from "./src/screens/MatchScreen";
 import HomeScreen from "./src/screens/HomeScreen";
+import { INITIAL_REP_REQUESTS, RepRequest } from "./src/representation";
+import RepresentationScreen from "./src/screens/RepresentationScreen";
 import CVScreen from "./src/screens/CVScreen";
 import SuccessCasesScreen from "./src/screens/SuccessCasesScreen";
 import { JobAlert } from "./src/forYou";
@@ -82,6 +84,8 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [tab, setTab] = useState<TabKey>("inicio");
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
+  const [repRequests, setRepRequests] = useState<RepRequest[]>(INITIAL_REP_REQUESTS);
+  const [repAgentId, setRepAgentId] = useState<string | null>(null);
   const [customAlerts, setCustomAlerts] = useState<JobAlert[]>([]);
   const [appliedIds, setAppliedIds] = useState<string[]>([]);
   // Estado de cada postulación (hoy "Postulado"; llega real con la plataforma conectada).
@@ -91,7 +95,7 @@ export default function App() {
   const [savedPlayerIds, setSavedPlayerIds] = useState<string[]>([]);
   const [proposalIds, setProposalIds] = useState<string[]>([]);
   const [overlay, setOverlay] = useState<
-    "edit" | "settings" | "messages" | "publish" | "candidates" | "folders" | "portfolio" | "match" | "plan" | "verification" | "pages" | "pageForm" | "pageDetail" | "notifications" | "applications" | "help" | "success" | "cv" | null
+    "edit" | "settings" | "messages" | "publish" | "candidates" | "folders" | "portfolio" | "match" | "plan" | "verification" | "pages" | "pageForm" | "pageDetail" | "notifications" | "applications" | "help" | "success" | "cv" | "representation" | null
   >(null);
   const [myOffers, setMyOffers] = useState<MyOffer[]>(INITIAL_MY_OFFERS);
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
@@ -489,6 +493,27 @@ export default function App() {
         }}
       />
     );
+  } else if (overlay === "representation") {
+    content = (
+      <RepresentationScreen
+        plan={plans.visibility}
+        requests={repRequests}
+        agentId={repAgentId}
+        onRequest={(agentId, message) =>
+          setRepRequests((c) => [...c, { id: `r${Date.now()}`, agentId, status: "PENDING", byPlayer: true, daysAgo: 0, message }])
+        }
+        onRespond={(id, status) => {
+          setRepRequests((c) => c.map((r) => (r.id === id ? { ...r, status } : r)));
+          if (status === "ACCEPTED") {
+            const req = repRequests.find((r) => r.id === id);
+            if (req) setRepAgentId(req.agentId);
+          }
+        }}
+        onReleaseAgent={() => setRepAgentId(null)}
+        onSeePlans={() => setOverlay("plan")}
+        onBack={() => setOverlay(null)}
+      />
+    );
   } else if (overlay === "cv") {
     content = <CVScreen user={user} profile={profile} verified={verification === "verified"} onBack={() => setOverlay(null)} />;
   } else if (overlay === "success") {
@@ -680,6 +705,7 @@ export default function App() {
         onVerify={() => setOverlay("verification")}
         onOpenPages={user.role !== "player" ? () => setOverlay("pages") : undefined}
         onOpenCV={user.role !== "agency" ? () => setOverlay("cv") : undefined}
+        onOpenRepresentation={user.role === "player" ? () => setOverlay("representation") : undefined}
       />
     );
   }
