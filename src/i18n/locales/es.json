@@ -688,5 +688,17 @@
   "success.eyebrow": "Caso de éxito",
   "success.view": "Ver caso de éxito",
   "success.prev": "Historia anterior",
-  "success.next": "Historia siguiente"
+  "success.next": "Historia siguiente",
+  "field.zoneGk": "Arquero",
+  "field.zoneDefense": "Defensa",
+  "field.zoneMidfield": "Mediocampo",
+  "field.zoneAttack": "Ataque",
+  "field.primary": "Principal",
+  "field.secondary": "Secundaria",
+  "field.notChosen": "Sin elegir",
+  "field.tip": "Tocá tu posición principal en la cancha (o en la lista de abajo) — automáticamente vas a poder elegir la secundaria a continuación.",
+  "field.byName": "O elegí por nombre",
+  "field.select": "Seleccioná tus posiciones en el campo",
+  "field.clearSecondary": "Quitar secundaria",
+  "catalog.Mediocampista Izquierdo": "Mediocampista Izquierdo"
 }

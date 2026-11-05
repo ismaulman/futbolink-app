@@ -3,11 +3,12 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import ChipGroup from "../components/ChipGroup";
 import Text from "../components/AppText";
+import PositionField from "../components/PositionField";
 import Field from "../components/Field";
 import VideoList from "../components/VideoList";
 import { parseVideo } from "../video";
 import ScreenHeader from "../components/ScreenHeader";
-import { POSITIONS, Profile, Role } from "../data";
+import { Profile, Role } from "../data";
 import { tc } from "../i18n";
 import { COLORS, RADIUS } from "../theme";
 
@@ -30,7 +31,6 @@ export default function EditProfileScreen({ name, role, profile, onSave, onBack 
   const [videoInput, setVideoInput] = useState("");
   const [videoError, setVideoError] = useState(false);
   const isPlayer = role === "player";
-  const positions = POSITIONS.filter((p) => p !== "Todas");
 
   const update = (patch: Partial<Profile>) => setDraft((d) => ({ ...d, ...patch }));
 
@@ -103,20 +103,11 @@ export default function EditProfileScreen({ name, role, profile, onSave, onBack 
         {isPlayer && (
           <>
             <Text style={[styles.section, styles.sectionGap]}>{t("edit.sports")}</Text>
-            <ChipGroup
-              label={t("edit.primaryPosition")}
-              options={positions.map((p) => ({ value: p, label: tc(p) }))}
-              value={draft.position}
-              onChange={(v) => update({ position: v })}
-            />
-            <ChipGroup
-              label={t("edit.secondaryPosition")}
-              options={[
-                { value: "", label: t("edit.none") },
-                ...positions.map((p) => ({ value: p, label: tc(p) })),
-              ]}
-              value={draft.secondaryPosition}
-              onChange={(v) => update({ secondaryPosition: v })}
+            <PositionField
+              primary={draft.position}
+              secondary={draft.secondaryPosition}
+              onPrimary={(v) => update({ position: v })}
+              onSecondary={(v) => update({ secondaryPosition: v })}
             />
             <ChipGroup
               label={t("profile.foot")}

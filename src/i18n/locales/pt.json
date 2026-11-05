@@ -688,5 +688,17 @@
   "success.eyebrow": "Caso de sucesso",
   "success.view": "Ver caso de sucesso",
   "success.prev": "História anterior",
-  "success.next": "Próxima história"
+  "success.next": "Próxima história",
+  "field.zoneGk": "Goleiro",
+  "field.zoneDefense": "Defesa",
+  "field.zoneMidfield": "Meio-campo",
+  "field.zoneAttack": "Ataque",
+  "field.primary": "Principal",
+  "field.secondary": "Secundária",
+  "field.notChosen": "Não escolhida",
+  "field.tip": "Toque na sua posição principal no campo (ou na lista abaixo) — automaticamente você vai poder escolher a secundária a seguir.",
+  "field.byName": "Ou escolha pelo nome",
+  "field.select": "Selecione suas posições no campo",
+  "field.clearSecondary": "Remover secundária",
+  "catalog.Mediocampista Izquierdo": "Meio-campista Esquerdo"
 }

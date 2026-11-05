@@ -688,5 +688,17 @@
   "success.eyebrow": "Success story",
   "success.view": "View success story",
   "success.prev": "Previous story",
-  "success.next": "Next story"
+  "success.next": "Next story",
+  "field.zoneGk": "Goalkeeper",
+  "field.zoneDefense": "Defense",
+  "field.zoneMidfield": "Midfield",
+  "field.zoneAttack": "Attack",
+  "field.primary": "Primary",
+  "field.secondary": "Secondary",
+  "field.notChosen": "Not chosen",
+  "field.tip": "Tap your primary position on the pitch (or in the list below) — you will then be able to choose the secondary one.",
+  "field.byName": "Or choose by name",
+  "field.select": "Select your positions on the pitch",
+  "field.clearSecondary": "Remove secondary",
+  "catalog.Mediocampista Izquierdo": "Left Midfielder"
 }

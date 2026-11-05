@@ -688,5 +688,17 @@
   "success.eyebrow": "Caso di successo",
   "success.view": "Vedi il caso di successo",
   "success.prev": "Storia precedente",
-  "success.next": "Storia successiva"
+  "success.next": "Storia successiva",
+  "field.zoneGk": "Portiere",
+  "field.zoneDefense": "Difesa",
+  "field.zoneMidfield": "Centrocampo",
+  "field.zoneAttack": "Attacco",
+  "field.primary": "Principale",
+  "field.secondary": "Secondaria",
+  "field.notChosen": "Non scelta",
+  "field.tip": "Tocca la posizione principale in campo (o nella lista sotto) — poi potrai scegliere la secondaria.",
+  "field.byName": "Oppure scegli per nome",
+  "field.select": "Seleziona le tue posizioni in campo",
+  "field.clearSecondary": "Rimuovi secondaria",
+  "catalog.Mediocampista Izquierdo": "Centrocampista sinistro"
 }

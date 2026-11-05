@@ -10,6 +10,7 @@ const SPOTS: Record<string, { x: number; y: number }> = {
   "Lateral Derecho": { x: 0.85, y: 0.72 },
   "Mediocampista Defensivo": { x: 0.5, y: 0.62 },
   "Mediocampista Central": { x: 0.5, y: 0.5 },
+  "Mediocampista Izquierdo": { x: 0.18, y: 0.48 },
   "Mediocampista Derecho": { x: 0.82, y: 0.48 },
   "Mediocampista Ofensivo": { x: 0.5, y: 0.36 },
   "Extremo Izquierdo": { x: 0.15, y: 0.2 },

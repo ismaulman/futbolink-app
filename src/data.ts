@@ -219,6 +219,7 @@ export const POSITIONS = [
   "Defensor Central Derecho",
   "Lateral Derecho",
   "Mediocampista Defensivo",
+  "Mediocampista Izquierdo",
   "Mediocampista Central",
   "Mediocampista Derecho",
   "Mediocampista Ofensivo",
